@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "autoren",
+  "info": {
+    "singularName": "autor",
+    "pluralName": "autoren",
+    "displayName": "Autor",
+    "description": "Autoren der Rezensionen"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "bio": {
+      "type": "richtext"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "rezensionen": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::rezension.rezension",
+      "mappedBy": "autor"
+    }
+  }
+}

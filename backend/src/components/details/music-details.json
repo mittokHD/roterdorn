@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_details_music_details",
+  "info": {
+    "displayName": "MusicDetails",
+    "icon": "headphone",
+    "description": "Details für Musik-Rezensionen"
+  },
+  "options": {},
+  "attributes": {
+    "artist": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "tracks": {
+      "type": "integer"
+    },
+    "releaseYear": {
+      "type": "integer"
+    }
+  }
+}

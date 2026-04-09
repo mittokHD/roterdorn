@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_details_event_details",
+  "info": {
+    "displayName": "EventDetails",
+    "icon": "calendar",
+    "description": "Details für Event-Rezensionen"
+  },
+  "options": {},
+  "attributes": {
+    "location": {
+      "type": "string"
+    },
+    "eventDate": {
+      "type": "date"
+    },
+    "organizer": {
+      "type": "string"
+    }
+  }
+}

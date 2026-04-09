@@ -1,0 +1,70 @@
+{
+  "kind": "collectionType",
+  "collectionName": "rezensionen",
+  "info": {
+    "singularName": "rezension",
+    "pluralName": "rezensionen",
+    "displayName": "Rezension",
+    "description": "Rezensionen für Bücher, Filme, Musik, Spiele und Events"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title"
+    },
+    "content": {
+      "type": "richtext"
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "rating": {
+      "type": "decimal",
+      "min": 0,
+      "max": 10
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["Buch", "Film", "Musik", "Spiel", "Event"],
+      "required": true
+    },
+    "details": {
+      "type": "dynamiczone",
+      "components": [
+        "details.book-details",
+        "details.movie-details",
+        "details.game-details",
+        "details.music-details",
+        "details.event-details"
+      ]
+    },
+    "autor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::autor.autor",
+      "inversedBy": "rezensionen"
+    },
+    "genres": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::genre.genre",
+      "inversedBy": "rezensionen"
+    },
+    "kommentare": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::kommentar.kommentar",
+      "mappedBy": "rezension"
+    }
+  }
+}

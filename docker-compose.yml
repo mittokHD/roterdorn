@@ -1,0 +1,84 @@
+services:
+  # ─── PostgreSQL 16 ───────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: roterdorn-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Strapi v5 CMS ──────────────────────────
+  strapi:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: roterdorn-strapi
+    restart: unless-stopped
+    ports:
+      - "1337:1337"
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      APP_KEYS: ${APP_KEYS}
+      API_TOKEN_SALT: ${API_TOKEN_SALT}
+      ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
+      JWT_SECRET: ${JWT_SECRET}
+      TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      NODE_ENV: development
+    volumes:
+      - ./backend/config:/opt/app/config
+      - ./backend/src:/opt/app/src
+      - ./backend/package.json:/opt/app/package.json
+      - ./backend/tsconfig.json:/opt/app/tsconfig.json
+      - ./backend/public/uploads:/opt/app/public/uploads
+      - strapi-node-modules:/opt/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ─── Next.js 15 Frontend ────────────────────
+  nextjs:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: roterdorn-nextjs
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_STRAPI_URL: http://strapi:1337
+      STRAPI_API_TOKEN: ${STRAPI_API_TOKEN}
+      STRAPI_WRITE_TOKEN: ${STRAPI_WRITE_TOKEN}
+      REVALIDATION_SECRET: ${REVALIDATION_SECRET}
+      NODE_ENV: development
+    volumes:
+      - ./frontend/app:/opt/app/app
+      - ./frontend/components:/opt/app/components
+      - ./frontend/lib:/opt/app/lib
+      - ./frontend/public:/opt/app/public
+      - ./frontend/next.config.ts:/opt/app/next.config.ts
+      - ./frontend/tsconfig.json:/opt/app/tsconfig.json
+      - ./frontend/postcss.config.mjs:/opt/app/postcss.config.mjs
+      - nextjs-node-modules:/opt/app/node_modules
+    depends_on:
+      - strapi
+
+volumes:
+  postgres-data:
+  strapi-node-modules:
+  nextjs-node-modules:

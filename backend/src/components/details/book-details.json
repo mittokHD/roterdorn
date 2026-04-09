@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_details_book_details",
+  "info": {
+    "displayName": "BookDetails",
+    "icon": "book",
+    "description": "Details für Buch-Rezensionen"
+  },
+  "options": {},
+  "attributes": {
+    "isbn": {
+      "type": "string"
+    },
+    "pages": {
+      "type": "integer"
+    },
+    "publisher": {
+      "type": "string"
+    },
+    "publishedDate": {
+      "type": "date"
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_details_game_details",
+  "info": {
+    "displayName": "GameDetails",
+    "icon": "puzzle",
+    "description": "Details für Spiel-Rezensionen"
+  },
+  "options": {},
+  "attributes": {
+    "platform": {
+      "type": "string"
+    },
+    "developer": {
+      "type": "string"
+    },
+    "publisher": {
+      "type": "string"
+    },
+    "releaseYear": {
+      "type": "integer"
+    }
+  }
+}

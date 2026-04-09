@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "kommentare",
+  "info": {
+    "singularName": "kommentar",
+    "pluralName": "kommentare",
+    "displayName": "Kommentar",
+    "description": "Kommentare zu Rezensionen mit Moderationsfunktion"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "text": {
+      "type": "text",
+      "required": true
+    },
+    "isApproved": {
+      "type": "boolean",
+      "default": false
+    },
+    "rezension": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::rezension.rezension",
+      "inversedBy": "kommentare"
+    }
+  }
+}
