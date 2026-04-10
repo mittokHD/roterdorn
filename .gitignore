@@ -1,37 +1,66 @@
+# ==========================================
+# root / monorepo settings
+# ==========================================
 # Dependencies
 node_modules/
+.pnp
+.pnp.js
 
-# Environment
+# Environment variables
 .env
 .env.local
-.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
 
-# Next.js
+# SQL & Database Dumps (very important for migration!)
+*.sql
+*.sqlite
+*.sqlite3
+dorn_db.sql
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# ==========================================
+# Next.js (Frontend)
+# ==========================================
 frontend/.next/
 frontend/out/
+frontend/build/
+*.tsbuildinfo
+next-env.d.ts
 
-# Strapi
+
+# ==========================================
+# Strapi v5 (Backend)
+# ==========================================
 backend/build/
 backend/dist/
 backend/.cache/
 backend/.tmp/
 backend/public/uploads/
 
-# Docker
+
+# ==========================================
+# Docker & CI
+# ==========================================
 docker-data/
+*.pem
+*.cert
+*.cer
 
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
