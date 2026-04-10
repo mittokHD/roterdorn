@@ -40,6 +40,10 @@ const SIZE_CLASSES = {
 };
 
 export default function RatingBadge({ rating, size = "md" }: RatingBadgeProps) {
+  if (rating == null || isNaN(rating)) {
+    return null;
+  }
+
   const colors = getRatingColor(rating);
 
   return (

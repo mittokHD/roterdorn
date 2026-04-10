@@ -7,7 +7,8 @@ import type {
 
 // ─── Configuration ───────────────────────────
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+// On the server (Docker), we use the internal Docker hostname. On the client, we use the public URL.
+const STRAPI_URL = process.env.STRAPI_INTERNAL_URL || process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
 
 // ─── Base Fetch ──────────────────────────────

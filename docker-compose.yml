@@ -61,7 +61,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      NEXT_PUBLIC_STRAPI_URL: http://strapi:1337
+      STRAPI_INTERNAL_URL: http://strapi:1337
+      NEXT_PUBLIC_STRAPI_URL: http://localhost:1337
       STRAPI_API_TOKEN: ${STRAPI_API_TOKEN}
       STRAPI_WRITE_TOKEN: ${STRAPI_WRITE_TOKEN}
       REVALIDATION_SECRET: ${REVALIDATION_SECRET}
@@ -77,6 +78,19 @@ services:
       - nextjs-node-modules:/opt/app/node_modules
     depends_on:
       - strapi
+
+  # ─── Legacy MySQL Database for Migration ────
+  mysql-legacy:
+    image: mysql:8.0
+    container_name: roterdorn-mysql-legacy
+    restart: "no" # Only needed during migration
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wp_legacy
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./dorn_db.sql:/docker-entrypoint-initdb.d/dump.sql
 
 volumes:
   postgres-data:
