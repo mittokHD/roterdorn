@@ -192,6 +192,37 @@ export default async function RezensionPage({ params }: PageProps) {
           </Link>
         </div>
       </div>
+
+      {/* JSON-LD Schema.org Review Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Review",
+            itemReviewed: {
+              "@type": "CreativeWork",
+              name: rezension.title,
+              image: coverUrl,
+            },
+            reviewRating: rezension.rating ? {
+              "@type": "Rating",
+              ratingValue: rezension.rating,
+              bestRating: "10",
+              worstRating: "1",
+            } : undefined,
+            author: {
+              "@type": "Person",
+              name: rezension.autor?.name || "Roterdorn",
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "Roterdorn",
+            },
+            datePublished: rezension.publishedAt,
+          }),
+        }}
+      />
     </article>
   );
 }

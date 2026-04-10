@@ -1,29 +1,41 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { Rezension } from "@/lib/types";
 import RezensionCard from "@/components/rezension/RezensionCard";
 
 export default function SuchePage() {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [results, setResults] = useState<Rezension[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!query.trim()) return;
+  // Debounce user input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [query]);
 
+  // Fetch results when debounced query changes
+  useEffect(() => {
+    if (!debouncedQuery.trim()) {
+      setResults([]);
+      setHasSearched(false);
+      return;
+    }
+
+    const performSearch = async () => {
       setIsLoading(true);
       setHasSearched(true);
 
       try {
-        const strapiUrl =
-          process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
+        const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
         const res = await fetch(
           `${strapiUrl}/api/rezensionen?filters[title][$containsi]=${encodeURIComponent(
-            query
+            debouncedQuery
           )}&populate[cover]=true&populate[autor]=true&populate[genres]=true&sort=publishedAt:desc&pagination[pageSize]=20`
         );
 
@@ -37,9 +49,15 @@ export default function SuchePage() {
       } finally {
         setIsLoading(false);
       }
-    },
-    [query]
-  );
+    };
+
+    performSearch();
+  }, [debouncedQuery]);
+
+  const handleSearchClick = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Optional manual fallback
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
@@ -57,7 +75,7 @@ export default function SuchePage() {
       </div>
 
       {/* Search Form */}
-      <form onSubmit={handleSearch} className="mb-10">
+      <form onSubmit={handleSearchClick} className="mb-10">
         <div className="flex gap-3">
           <input
             type="text"

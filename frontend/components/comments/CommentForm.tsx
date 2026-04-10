@@ -9,6 +9,7 @@ interface CommentFormProps {
 export default function CommentForm({ rezensionId }: CommentFormProps) {
   const [name, setName] = useState("");
   const [text, setText] = useState("");
+  const [website, setWebsite] = useState(""); // Honeypot state
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -27,6 +28,7 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
         body: JSON.stringify({
           name: name.trim(),
           text: text.trim(),
+          website: website, // Honeypot
           rezensionId,
         }),
       });
@@ -100,6 +102,20 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
                 color: "var(--text-primary)",
                 border: "1px solid var(--border-default)",
               }}
+            />
+          </div>
+
+          {/* Honeypot Field - Invisible to users, catches bots */}
+          <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
+            <label htmlFor="website">Website</label>
+            <input
+              id="website"
+              name="website"
+              type="text"
+              tabIndex={-1}
+              autoComplete="off"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
             />
           </div>
 

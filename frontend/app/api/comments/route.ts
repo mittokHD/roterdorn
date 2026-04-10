@@ -1,14 +1,20 @@
 import { NextResponse } from "next/server";
 
-const STRAPI_URL = process.env.NEXT_PUBLIC_STRAPI_URL || "http://strapi:1337";
+const STRAPI_URL = process.env.STRAPI_INTERNAL_URL || "http://strapi:1337";
 const STRAPI_WRITE_TOKEN = process.env.STRAPI_WRITE_TOKEN;
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Validate required fields
-    const { name, text, rezensionId } = body;
+    // Validate required fields AND honeypot
+    const { name, text, website, rezensionId } = body;
+
+    // BOT PROTECTION (Honeypot) - If 'website' is filled, it's a spambot.
+    if (website && website.length > 0) {
+      // Fake a success response to fool the bot into thinking it worked!
+      return NextResponse.json({ success: true, fake: true }, { status: 201 });
+    }
 
     if (!name || typeof name !== "string" || name.trim().length < 2) {
       return NextResponse.json(
