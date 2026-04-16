@@ -1,16 +1,15 @@
+import 'dotenv/config';
 import mysql from 'mysql2/promise';
 import slugify from 'slugify';
 import TurndownService from 'turndown';
 
-// Konfiguration anpassen, falls nötig
-const DB_HOST = 'localhost';
-const DB_USER = 'root';
-const DB_PASSWORD = 'root';
-const DB_NAME = 'wp_legacy'; // In Docker-Compose definierte DB
+const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_USER = process.env.DB_USER || 'root';
+const DB_PASSWORD = process.env.DB_PASSWORD || 'root';
+const DB_NAME = process.env.DB_NAME || 'wp_legacy';
 
-const STRAPI_URL = 'http://localhost:1337/api';
-// Erstelle im Strapi Admin Panel einen Full-Access API Token und trage ihn hier ein:
-const STRAPI_TOKEN = '4401ae4715496e48662ae1bad150b11d82c69e01e2a6928fa67f8d23a852386fe6ce42ecf8d520b2d543285911b8ca4f77fcbb92a99087cd9120b161f6783a8293cb35fa2e761ad3c4e45bf4370112e593cf842fa7402d43d90c99f3ed53a60c9f9bdc771515c1298d2d6839b182896ad9d7539ea17728eb250c6b04db15cb8b';
+const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337/api';
+const STRAPI_TOKEN = process.env.STRAPI_MIGRATION_TOKEN;
 
 const turndownService = new TurndownService();
 
