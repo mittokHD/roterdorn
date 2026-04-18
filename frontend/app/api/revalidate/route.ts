@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
+import { REVALIDATION_SECRET } from "@/lib/config";
 
 export async function POST(request: Request) {
   try {
     // Verify webhook secret
     const secret = request.headers.get("x-webhook-secret");
-    const expectedSecret = process.env.REVALIDATION_SECRET;
 
-    if (!expectedSecret || secret !== expectedSecret) {
+    if (!REVALIDATION_SECRET || secret !== REVALIDATION_SECRET) {
       return NextResponse.json(
         { error: "Invalid webhook secret" },
         { status: 401 }

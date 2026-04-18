@@ -1,14 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
-const FOOTER_LINKS = [
-  { href: "/buch", label: "Bücher" },
-  { href: "/film", label: "Filme" },
-  { href: "/musik", label: "Musik" },
-  { href: "/spiel", label: "Spiele" },
-  { href: "/event", label: "Events" },
-];
+import { NAV_ITEMS } from "@/lib/constants";
 
 export default function Footer() {
   return (
@@ -49,7 +42,7 @@ export default function Footer() {
               Kategorien
             </h3>
             <ul className="space-y-2">
-              {FOOTER_LINKS.map((link) => (
+              {NAV_ITEMS.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

@@ -1,4 +1,5 @@
 import type { Kommentar } from "@/lib/types";
+import { formatDateShort } from "@/lib/constants";
 import CommentForm from "./CommentForm";
 
 interface CommentSectionProps {
@@ -62,11 +63,7 @@ export default function CommentSection({
                   style={{ color: "var(--text-muted)" }}
                   dateTime={kommentar.createdAt}
                 >
-                  {new Date(kommentar.createdAt).toLocaleDateString("de-DE", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
+                  {formatDateShort(kommentar.createdAt)}
                 </time>
               </div>
               <p

@@ -28,17 +28,20 @@ services:
     ports:
       - "1337:1337"
     environment:
-      DATABASE_CLIENT: postgres
+      DATABASE_CLIENT: ${DATABASE_CLIENT}
       DATABASE_HOST: ${DATABASE_HOST}
       DATABASE_PORT: ${DATABASE_PORT}
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_USERNAME: ${DATABASE_USERNAME}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      HOST: ${HOST}
+      PORT: ${PORT}
       APP_KEYS: ${APP_KEYS}
       API_TOKEN_SALT: ${API_TOKEN_SALT}
       ADMIN_JWT_SECRET: ${ADMIN_JWT_SECRET}
       JWT_SECRET: ${JWT_SECRET}
       TRANSFER_TOKEN_SALT: ${TRANSFER_TOKEN_SALT}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
       NODE_ENV: development
     volumes:
       - ./backend/config:/opt/app/config
@@ -61,11 +64,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      STRAPI_INTERNAL_URL: http://strapi:1337
-      NEXT_PUBLIC_STRAPI_URL: http://localhost:1337
+      STRAPI_INTERNAL_URL: ${STRAPI_INTERNAL_URL}
+      NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL}
       STRAPI_API_TOKEN: ${STRAPI_API_TOKEN}
       STRAPI_WRITE_TOKEN: ${STRAPI_WRITE_TOKEN}
       REVALIDATION_SECRET: ${REVALIDATION_SECRET}
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
       NODE_ENV: development
     volumes:
       - ./frontend/app:/opt/app/app

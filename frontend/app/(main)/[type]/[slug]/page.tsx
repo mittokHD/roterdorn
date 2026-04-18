@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getRezensionBySlug, getStrapiMediaUrl } from "@/lib/strapi";
-import { TYPE_SLUG_MAP, TYPE_LABELS, TYPE_REVERSE_MAP } from "@/lib/types";
+import { TYPE_SLUG_MAP } from "@/lib/types";
+import { TYPE_META, formatDate } from "@/lib/constants";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
 import DetailSection from "@/components/rezension/DetailSection";
@@ -54,11 +55,8 @@ export default async function RezensionPage({ params }: PageProps) {
   if (!rezension) notFound();
 
   const coverUrl = getStrapiMediaUrl(rezension.cover?.url);
-  const publishDate = new Date(rezension.publishedAt).toLocaleDateString("de-DE", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  const publishDate = formatDate(rezension.publishedAt);
+  const meta = TYPE_META[rezension.type];
 
   return (
     <article className="animate-fade-in-up">
@@ -184,11 +182,11 @@ export default async function RezensionPage({ params }: PageProps) {
         {/* Back link */}
         <div className="mt-12">
           <Link
-            href={`/${TYPE_REVERSE_MAP[rezension.type]}`}
+            href={`/${meta.slug}`}
             className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
             style={{ color: "var(--text-accent)" }}
           >
-            ← Zurück zu {TYPE_LABELS[rezension.type]}
+            ← Zurück zu {meta.labelPlural}
           </Link>
         </div>
       </div>

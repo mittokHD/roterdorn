@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Rezension } from "@/lib/types";
-import { TYPE_REVERSE_MAP } from "@/lib/types";
+import { TYPE_META } from "@/lib/constants";
 import { getStrapiMediaUrl } from "@/lib/strapi";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
@@ -11,8 +11,8 @@ interface RezensionCardProps {
 }
 
 export default function RezensionCard({ rezension }: RezensionCardProps) {
-  const typeSlug = TYPE_REVERSE_MAP[rezension.type];
-  const href = `/${typeSlug}/${rezension.slug}`;
+  const meta = TYPE_META[rezension.type];
+  const href = `/${meta.slug}/${rezension.slug}`;
   const coverUrl = getStrapiMediaUrl(rezension.cover?.url);
 
   return (
@@ -33,15 +33,7 @@ export default function RezensionCard({ rezension }: RezensionCardProps) {
               className="absolute inset-0 flex items-center justify-center text-4xl"
               style={{ background: "var(--bg-tertiary)" }}
             >
-              {rezension.type === "Buch"
-                ? "📚"
-                : rezension.type === "Film"
-                ? "🎬"
-                : rezension.type === "Musik"
-                ? "🎵"
-                : rezension.type === "Spiel"
-                ? "🎮"
-                : "🎪"}
+              {meta.icon}
             </div>
           )}
 

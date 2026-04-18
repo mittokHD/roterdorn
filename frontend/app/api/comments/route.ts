@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
-
-const STRAPI_URL = process.env.STRAPI_INTERNAL_URL || "http://strapi:1337";
-const STRAPI_WRITE_TOKEN = process.env.STRAPI_WRITE_TOKEN;
+import { STRAPI_INTERNAL_URL, STRAPI_WRITE_TOKEN } from "@/lib/config";
 
 export async function POST(request: Request) {
   try {
@@ -38,7 +36,7 @@ export async function POST(request: Request) {
     }
 
     // Forward to Strapi with write token (not exposed to client)
-    const strapiRes = await fetch(`${STRAPI_URL}/api/kommentare`, {
+    const strapiRes = await fetch(`${STRAPI_INTERNAL_URL}/api/kommentare`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

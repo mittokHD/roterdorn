@@ -1,16 +1,10 @@
 import Link from "next/link";
 import { getRezensionen } from "@/lib/strapi";
-import { TYPE_REVERSE_MAP, TYPE_LABELS } from "@/lib/types";
-import type { RezensionType, Rezension } from "@/lib/types";
+import { ALL_TYPES, TYPE_META } from "@/lib/constants";
+import type { Rezension } from "@/lib/types";
 import RezensionCard from "@/components/rezension/RezensionCard";
-
-const CATEGORIES: { type: RezensionType; icon: string; description: string }[] = [
-  { type: "Buch", icon: "📚", description: "Romane, Sachbücher, Comics" },
-  { type: "Film", icon: "🎬", description: "Kino, Streaming, Dokus" },
-  { type: "Musik", icon: "🎵", description: "Alben, Singles, Live" },
-  { type: "Spiel", icon: "🎮", description: "PC, Konsole, Tabletop" },
-  { type: "Event", icon: "🎪", description: "Konzerte, Messen, Festivals" },
-];
+import EmptyState from "@/components/ui/EmptyState";
+import { SearchIcon } from "@/components/ui/Icons";
 
 export default async function HomePage() {
   let rezensionen: Rezension[] = [];
@@ -68,20 +62,7 @@ export default async function HomePage() {
               }}
               id="hero-cta"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
+              <SearchIcon />
               Rezensionen durchsuchen
             </Link>
           </div>
@@ -91,25 +72,28 @@ export default async function HomePage() {
       {/* ─── Categories ───────────────────────────── */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {CATEGORIES.map((cat) => (
-            <Link
-              key={cat.type}
-              href={`/${TYPE_REVERSE_MAP[cat.type]}`}
-              className="glass-card p-4 text-center group"
-              id={`category-${TYPE_REVERSE_MAP[cat.type]}`}
-            >
-              <div className="text-3xl mb-2">{cat.icon}</div>
-              <h3
-                className="text-sm font-semibold mb-1 transition-colors duration-200 group-hover:text-[var(--text-accent)]"
-                style={{ color: "var(--text-primary)" }}
+          {ALL_TYPES.map((t) => {
+            const meta = TYPE_META[t];
+            return (
+              <Link
+                key={t}
+                href={`/${meta.slug}`}
+                className="glass-card p-4 text-center group"
+                id={`category-${meta.slug}`}
               >
-                {TYPE_LABELS[cat.type]}
-              </h3>
-              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
-                {cat.description}
-              </p>
-            </Link>
-          ))}
+                <div className="text-3xl mb-2">{meta.icon}</div>
+                <h3
+                  className="text-sm font-semibold mb-1 transition-colors duration-200 group-hover:text-[var(--text-accent)]"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {meta.labelPlural}
+                </h3>
+                <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                  {meta.description}
+                </p>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -135,27 +119,16 @@ export default async function HomePage() {
 
         {hasData ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">
-            {rezensionen!.map((rezension) => (
+            {rezensionen.map((rezension) => (
               <RezensionCard key={rezension.id} rezension={rezension} />
             ))}
           </div>
         ) : (
-          <div
-            className="glass-card p-12 text-center"
-            style={{ color: "var(--text-muted)" }}
-          >
-            <div className="text-5xl mb-4">🌱</div>
-            <h3
-              className="text-lg font-semibold mb-2"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              Noch keine Rezensionen
-            </h3>
-            <p className="text-sm max-w-md mx-auto">
-              Es wurden noch keine Rezensionen veröffentlicht. Sobald Inhalte im CMS
-              angelegt werden, erscheinen sie hier.
-            </p>
-          </div>
+          <EmptyState
+            icon="🌱"
+            title="Noch keine Rezensionen"
+            description="Es wurden noch keine Rezensionen veröffentlicht. Sobald Inhalte im CMS angelegt werden, erscheinen sie hier."
+          />
         )}
       </section>
     </div>

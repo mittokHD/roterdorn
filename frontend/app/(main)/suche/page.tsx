@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { Rezension } from "@/lib/types";
+import { STRAPI_PUBLIC_URL } from "@/lib/config";
 import RezensionCard from "@/components/rezension/RezensionCard";
+import EmptyState from "@/components/ui/EmptyState";
+import { SpinnerIcon } from "@/components/ui/Icons";
 
 export default function SuchePage() {
   const [query, setQuery] = useState("");
@@ -32,9 +35,8 @@ export default function SuchePage() {
       setHasSearched(true);
 
       try {
-        const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
         const res = await fetch(
-          `${strapiUrl}/api/rezensionen?filters[title][$containsi]=${encodeURIComponent(
+          `${STRAPI_PUBLIC_URL}/api/rezensionen?filters[title][$containsi]=${encodeURIComponent(
             debouncedQuery
           )}&populate[cover]=true&populate[autor]=true&populate[genres]=true&sort=publishedAt:desc&pagination[pageSize]=20`
         );
@@ -56,7 +58,6 @@ export default function SuchePage() {
 
   const handleSearchClick = (e: React.FormEvent) => {
     e.preventDefault();
-    // Optional manual fallback
   };
 
   return (
@@ -105,25 +106,7 @@ export default function SuchePage() {
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <svg
-                  className="animate-spin h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
+                <SpinnerIcon />
                 Suche...
               </span>
             ) : (
@@ -159,34 +142,19 @@ export default function SuchePage() {
       )}
 
       {!isLoading && hasSearched && results.length === 0 && (
-        <div
-          className="glass-card p-12 text-center"
-          style={{ color: "var(--text-muted)" }}
-        >
-          <div className="text-5xl mb-4">🔍</div>
-          <h3
-            className="text-lg font-semibold mb-2"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            Keine Ergebnisse
-          </h3>
-          <p className="text-sm max-w-md mx-auto">
-            Für &quot;{query}&quot; wurden keine Rezensionen gefunden. Versuche einen
-            anderen Suchbegriff.
-          </p>
-        </div>
+        <EmptyState
+          icon="🔍"
+          title="Keine Ergebnisse"
+          description={`Für "${query}" wurden keine Rezensionen gefunden. Versuche einen anderen Suchbegriff.`}
+        />
       )}
 
       {!hasSearched && (
-        <div
-          className="glass-card p-12 text-center"
-          style={{ color: "var(--text-muted)" }}
-        >
-          <div className="text-5xl mb-4">✨</div>
-          <p className="text-sm max-w-md mx-auto">
-            Gib einen Suchbegriff ein, um Rezensionen zu finden.
-          </p>
-        </div>
+        <EmptyState
+          icon="✨"
+          title="Suche starten"
+          description="Gib einen Suchbegriff ein, um Rezensionen zu finden."
+        />
       )}
     </div>
   );

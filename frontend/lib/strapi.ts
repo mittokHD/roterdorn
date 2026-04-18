@@ -4,12 +4,70 @@ import type {
   StrapiSingleResponse,
   RezensionType,
 } from "./types";
+import {
+  STRAPI_INTERNAL_URL,
+  STRAPI_API_TOKEN,
+  getStrapiBaseUrl,
+} from "./config";
 
-// ─── Configuration ───────────────────────────
+// ─── Strapi Query Builder ────────────────────
 
-// On the server (Docker), we use the internal Docker hostname. On the client, we use the public URL.
-const STRAPI_URL = process.env.STRAPI_INTERNAL_URL || process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
-const STRAPI_TOKEN = process.env.STRAPI_API_TOKEN;
+/**
+ * Builds a Strapi REST API query string from structured params.
+ * Replaces fragile manual string concatenation with a type-safe builder.
+ */
+function buildQuery(params: {
+  populate?: Record<string, boolean | Record<string, boolean>>;
+  filters?: Record<string, Record<string, string>>;
+  sort?: string;
+  pagination?: { page: number; pageSize: number };
+}): string {
+  const parts: string[] = [];
+
+  // Populate
+  if (params.populate) {
+    for (const [key, value] of Object.entries(params.populate)) {
+      if (typeof value === "object") {
+        for (const [subKey, subVal] of Object.entries(value)) {
+          parts.push(`populate[${key}][populate][${subKey}]=${subVal}`);
+        }
+      } else {
+        parts.push(`populate[${key}]=${value}`);
+      }
+    }
+  }
+
+  // Filters
+  if (params.filters) {
+    for (const [field, operators] of Object.entries(params.filters)) {
+      for (const [op, val] of Object.entries(operators)) {
+        parts.push(`filters[${field}][${op}]=${encodeURIComponent(val)}`);
+      }
+    }
+  }
+
+  // Sort
+  if (params.sort) {
+    parts.push(`sort=${params.sort}`);
+  }
+
+  // Pagination
+  if (params.pagination) {
+    parts.push(`pagination[page]=${params.pagination.page}`);
+    parts.push(`pagination[pageSize]=${params.pagination.pageSize}`);
+  }
+
+  return parts.join("&");
+}
+
+/** Standard populate config for Rezensionen — cover, autor+avatar, genres, kommentare, details */
+const REZENSION_POPULATE: Record<string, boolean | Record<string, boolean>> = {
+  cover: true,
+  autor: { avatar: true },
+  genres: true,
+  kommentare: true,
+  details: true,
+};
 
 // ─── Base Fetch ──────────────────────────────
 
@@ -22,14 +80,14 @@ async function fetchStrapi<T>(
   path: string,
   options: FetchOptions = {}
 ): Promise<T> {
-  const url = `${STRAPI_URL}/api${path}`;
+  const url = `${STRAPI_INTERNAL_URL}/api${path}`;
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
   };
 
-  if (STRAPI_TOKEN) {
-    headers.Authorization = `Bearer ${STRAPI_TOKEN}`;
+  if (STRAPI_API_TOKEN) {
+    headers.Authorization = `Bearer ${STRAPI_API_TOKEN}`;
   }
 
   const res = await fetch(url, {
@@ -52,25 +110,19 @@ async function fetchStrapi<T>(
 
 // ─── Rezensionen ─────────────────────────────
 
-/** Shared populate query for Rezension — resolves cover, autor, genres, kommentare, and dynamic zone details */
-const REZENSION_POPULATE =
-  "populate[cover]=true" +
-  "&populate[autor][populate][avatar]=true" +
-  "&populate[genres]=true" +
-  "&populate[kommentare]=true" +
-  "&populate[details]=true";
-
 export async function getRezensionen(params?: {
   page?: number;
   pageSize?: number;
   sort?: string;
 }): Promise<StrapiResponse<Rezension>> {
-  const page = params?.page || 1;
-  const pageSize = params?.pageSize || 12;
-  const sort = params?.sort || "publishedAt:desc";
+  const query = buildQuery({
+    populate: REZENSION_POPULATE,
+    sort: params?.sort || "publishedAt:desc",
+    pagination: { page: params?.page || 1, pageSize: params?.pageSize || 12 },
+  });
 
   return fetchStrapi<StrapiResponse<Rezension>>(
-    `/rezensionen?${REZENSION_POPULATE}&sort=${sort}&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
+    `/rezensionen?${query}`,
     { tags: ["rezensionen"] }
   );
 }
@@ -79,11 +131,15 @@ export async function getRezensionenByType(
   type: RezensionType,
   params?: { page?: number; pageSize?: number }
 ): Promise<StrapiResponse<Rezension>> {
-  const page = params?.page || 1;
-  const pageSize = params?.pageSize || 12;
+  const query = buildQuery({
+    populate: REZENSION_POPULATE,
+    filters: { type: { $eq: type } },
+    sort: "publishedAt:desc",
+    pagination: { page: params?.page || 1, pageSize: params?.pageSize || 12 },
+  });
 
   return fetchStrapi<StrapiResponse<Rezension>>(
-    `/rezensionen?${REZENSION_POPULATE}&filters[type][$eq]=${type}&sort=publishedAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
+    `/rezensionen?${query}`,
     { tags: ["rezensionen"] }
   );
 }
@@ -91,21 +147,30 @@ export async function getRezensionenByType(
 export async function getRezensionBySlug(
   slug: string
 ): Promise<StrapiSingleResponse<Rezension[]>> {
+  const query = buildQuery({
+    populate: REZENSION_POPULATE,
+    filters: { slug: { $eq: slug } },
+  });
+
   return fetchStrapi<StrapiSingleResponse<Rezension[]>>(
-    `/rezensionen?${REZENSION_POPULATE}&filters[slug][$eq]=${slug}`,
+    `/rezensionen?${query}`,
     { tags: ["rezensionen"] }
   );
 }
 
 export async function searchRezensionen(
-  query: string,
+  searchQuery: string,
   params?: { page?: number; pageSize?: number }
 ): Promise<StrapiResponse<Rezension>> {
-  const page = params?.page || 1;
-  const pageSize = params?.pageSize || 12;
+  const query = buildQuery({
+    populate: REZENSION_POPULATE,
+    filters: { title: { $containsi: searchQuery } },
+    sort: "publishedAt:desc",
+    pagination: { page: params?.page || 1, pageSize: params?.pageSize || 12 },
+  });
 
   return fetchStrapi<StrapiResponse<Rezension>>(
-    `/rezensionen?${REZENSION_POPULATE}&filters[title][$containsi]=${encodeURIComponent(query)}&sort=publishedAt:desc&pagination[page]=${page}&pagination[pageSize]=${pageSize}`,
+    `/rezensionen?${query}`,
     { tags: ["rezensionen"] }
   );
 }
@@ -119,11 +184,5 @@ export async function searchRezensionen(
 export function getStrapiMediaUrl(url: string | undefined | null): string {
   if (!url) return "/placeholder.jpg";
   if (url.startsWith("http")) return url;
-  // In the browser, use the public STRAPI_URL (localhost:1337)
-  // On the server, use the internal Docker hostname
-  const base =
-    typeof window !== "undefined"
-      ? process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"
-      : STRAPI_URL;
-  return `${base}${url}`;
+  return `${getStrapiBaseUrl()}${url}`;
 }

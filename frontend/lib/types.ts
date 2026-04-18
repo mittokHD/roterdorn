@@ -141,27 +141,20 @@ export interface StrapiSingleResponse<T> {
 }
 
 // ─── URL Slug Mapping ────────────────────────
+// Derived from the centralized TYPE_META in constants.ts.
+// Re-exported here for backwards-compatible imports.
 
-export const TYPE_SLUG_MAP: Record<string, RezensionType> = {
-  buch: "Buch",
-  film: "Film",
-  musik: "Musik",
-  spiel: "Spiel",
-  event: "Event",
-};
+import { TYPE_META, ALL_TYPES } from "./constants";
 
-export const TYPE_REVERSE_MAP: Record<RezensionType, string> = {
-  Buch: "buch",
-  Film: "film",
-  Musik: "musik",
-  Spiel: "spiel",
-  Event: "event",
-};
+export const TYPE_SLUG_MAP: Record<string, RezensionType> = Object.fromEntries(
+  ALL_TYPES.map((t) => [TYPE_META[t].slug, t])
+) as Record<string, RezensionType>;
 
-export const TYPE_LABELS: Record<RezensionType, string> = {
-  Buch: "Bücher",
-  Film: "Filme",
-  Musik: "Musik",
-  Spiel: "Spiele",
-  Event: "Events",
-};
+export const TYPE_REVERSE_MAP: Record<RezensionType, string> = Object.fromEntries(
+  ALL_TYPES.map((t) => [t, TYPE_META[t].slug])
+) as Record<RezensionType, string>;
+
+export const TYPE_LABELS: Record<RezensionType, string> = Object.fromEntries(
+  ALL_TYPES.map((t) => [t, TYPE_META[t].labelPlural])
+) as Record<RezensionType, string>;
+
