@@ -14,7 +14,6 @@ export interface TypeMeta {
   label: string;
   labelPlural: string;
   icon: string;
-  icon: string;
   description: string;
   className: string;
 }

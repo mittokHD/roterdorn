@@ -76,7 +76,7 @@ export default async function RezensionPage({ params }: PageProps) {
             className="absolute inset-0 bg-surface-tertiary"
           />
         )}
-        {/* Gradient overlay */}
+        <div
           className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-[rgba(10,10,15,0.6)] to-[rgba(10,10,15,0.3)]"
         />
       </div>
