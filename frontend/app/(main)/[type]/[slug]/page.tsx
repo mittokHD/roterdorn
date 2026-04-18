@@ -73,17 +73,11 @@ export default async function RezensionPage({ params }: PageProps) {
           />
         ) : (
           <div
-            className="absolute inset-0"
-            style={{ background: "var(--bg-tertiary)" }}
+            className="absolute inset-0 bg-surface-tertiary"
           />
         )}
         {/* Gradient overlay */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, var(--bg-primary) 0%, rgba(10, 10, 15, 0.6) 50%, rgba(10, 10, 15, 0.3) 100%)",
-          }}
+          className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-[rgba(10,10,15,0.6)] to-[rgba(10,10,15,0.3)]"
         />
       </div>
 
@@ -93,15 +87,14 @@ export default async function RezensionPage({ params }: PageProps) {
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <TypeBadge type={rezension.type} />
           <RatingBadge rating={rezension.rating} size="lg" />
-          <span className="text-sm" style={{ color: "var(--text-muted)" }}>
+          <span className="text-sm text-text-muted">
             {publishDate}
           </span>
         </div>
 
         {/* Title */}
         <h1
-          className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight mb-4"
-          style={{ color: "var(--text-primary)" }}
+          className="text-3xl sm:text-4xl lg:text-5xl font-black leading-tight mb-4 text-text-primary"
         >
           {rezension.title}
         </h1>
@@ -115,18 +108,16 @@ export default async function RezensionPage({ params }: PageProps) {
                 alt={rezension.autor.name}
                 width={40}
                 height={40}
-                className="rounded-full object-cover"
-                style={{ border: "2px solid var(--border-subtle)" }}
+                className="rounded-full object-cover border-2 border-border-subtle"
               />
             )}
             <div>
               <p
-                className="text-sm font-medium"
-                style={{ color: "var(--text-primary)" }}
+                className="text-sm font-medium text-text-primary"
               >
                 {rezension.autor.name}
               </p>
-              <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+              <p className="text-xs text-text-muted">
                 Autor
               </p>
             </div>
@@ -139,12 +130,7 @@ export default async function RezensionPage({ params }: PageProps) {
             {rezension.genres.map((genre) => (
               <span
                 key={genre.id}
-                className="text-xs px-3 py-1 rounded-full font-medium"
-                style={{
-                  background: "var(--bg-tertiary)",
-                  color: "var(--text-secondary)",
-                  border: "1px solid var(--border-subtle)",
-                }}
+                className="text-xs px-3 py-1 rounded-full font-medium bg-surface-tertiary text-text-secondary border border-border-subtle"
               >
                 {genre.name}
               </span>
@@ -167,8 +153,7 @@ export default async function RezensionPage({ params }: PageProps) {
 
         {/* Divider */}
         <hr
-          className="mb-12"
-          style={{ borderColor: "var(--border-subtle)" }}
+          className="mb-12 border-border-subtle"
         />
 
         {/* Comments */}
@@ -183,8 +168,7 @@ export default async function RezensionPage({ params }: PageProps) {
         <div className="mt-12">
           <Link
             href={`/${meta.slug}`}
-            className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200"
-            style={{ color: "var(--text-accent)" }}
+            className="inline-flex items-center gap-2 text-sm font-medium transition-colors duration-200 text-text-accent"
           >
             ← Zurück zu {meta.labelPlural}
           </Link>

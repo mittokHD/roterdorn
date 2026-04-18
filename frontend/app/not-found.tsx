@@ -13,7 +13,7 @@ export default function NotFound() {
         >
           404
         </h1>
-        <h2 className="text-2xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>
+        <h2 className="text-2xl font-bold mb-4 text-text-primary">
           Seite nicht gefunden
         </h2>
         <p className="max-w-md mx-auto mb-8 text-base" style={{ color: "var(--text-secondary)" }}>

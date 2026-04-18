@@ -51,18 +51,16 @@ export default async function TypePage({ params }: PageProps) {
         <div className="flex items-center gap-3 mb-3">
           <span className="text-4xl">{meta.icon}</span>
           <h1
-            className="text-3xl sm:text-4xl font-black"
-            style={{ color: "var(--text-primary)" }}
+            className="text-3xl sm:text-4xl font-black text-text-primary"
           >
             {meta.labelPlural}
           </h1>
         </div>
         <p
-          className="text-base max-w-2xl"
-          style={{ color: "var(--text-secondary)" }}
+          className="text-base max-w-2xl text-text-secondary"
         >
           Alle Rezensionen in der Kategorie{" "}
-          <strong style={{ color: "var(--text-accent)" }}>
+          <strong className="text-text-accent">
             {meta.labelPlural}
           </strong>
           .

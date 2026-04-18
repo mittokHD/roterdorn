@@ -121,17 +121,8 @@ function DetailCard({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className="rounded-xl p-5"
-      style={{
-        background: "var(--bg-tertiary)",
-        border: "1px solid var(--border-subtle)",
-      }}
-    >
-      <h3
-        className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2"
-        style={{ color: "var(--text-secondary)" }}
-      >
+    <div className="rounded-xl p-5 bg-surface-tertiary border border-border-subtle">
+      <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 flex items-center gap-2 text-text-secondary">
         <span>{icon}</span>
         {title}
       </h3>
@@ -151,10 +142,10 @@ function DetailRow({
 
   return (
     <div>
-      <dt className="text-xs mb-0.5" style={{ color: "var(--text-muted)" }}>
+      <dt className="text-xs mb-0.5 text-text-muted">
         {label}
       </dt>
-      <dd className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>
+      <dd className="text-sm font-medium text-text-primary">
         {value}
       </dd>
     </div>

@@ -31,12 +31,8 @@ export default function ReadingProgress() {
 
   return (
     <div 
-      className="fixed top-0 left-0 h-1 z-[60] transition-all duration-150 ease-out"
-      style={{ 
-        width: `${progress}%`,
-        background: "var(--brand-500)",
-        boxShadow: "0 0 10px var(--brand-500)"
-      }}
+      className="fixed top-0 left-0 h-1 z-[60] transition-all duration-150 ease-out bg-brand-500 shadow-[0_0_10px_var(--brand-500)]"
+      style={{ width: `${progress}%` }}
     />
   );
 }

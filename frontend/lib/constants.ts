@@ -14,9 +14,9 @@ export interface TypeMeta {
   label: string;
   labelPlural: string;
   icon: string;
+  icon: string;
   description: string;
-  color: string;
-  bg: string;
+  className: string;
 }
 
 export const TYPE_META: Record<RezensionType, TypeMeta> = {
@@ -27,8 +27,7 @@ export const TYPE_META: Record<RezensionType, TypeMeta> = {
     labelPlural: "Bücher",
     icon: "📚",
     description: "Romane, Sachbücher, Comics",
-    color: "#818cf8",
-    bg: "rgba(129, 140, 248, 0.12)",
+    className: "text-indigo-400 bg-indigo-500/10 border-indigo-400/20",
   },
   Film: {
     type: "Film",
@@ -37,8 +36,7 @@ export const TYPE_META: Record<RezensionType, TypeMeta> = {
     labelPlural: "Filme",
     icon: "🎬",
     description: "Kino, Streaming, Dokus",
-    color: "#f472b6",
-    bg: "rgba(244, 114, 182, 0.12)",
+    className: "text-pink-400 bg-pink-500/10 border-pink-400/20",
   },
   Musik: {
     type: "Musik",
@@ -47,8 +45,7 @@ export const TYPE_META: Record<RezensionType, TypeMeta> = {
     labelPlural: "Musik",
     icon: "🎵",
     description: "Alben, Singles, Live",
-    color: "#34d399",
-    bg: "rgba(52, 211, 153, 0.12)",
+    className: "text-emerald-400 bg-emerald-500/10 border-emerald-400/20",
   },
   Spiel: {
     type: "Spiel",
@@ -57,8 +54,7 @@ export const TYPE_META: Record<RezensionType, TypeMeta> = {
     labelPlural: "Spiele",
     icon: "🎮",
     description: "PC, Konsole, Tabletop",
-    color: "#60a5fa",
-    bg: "rgba(96, 165, 250, 0.12)",
+    className: "text-blue-400 bg-blue-500/10 border-blue-400/20",
   },
   Event: {
     type: "Event",
@@ -67,8 +63,7 @@ export const TYPE_META: Record<RezensionType, TypeMeta> = {
     labelPlural: "Events",
     icon: "🎪",
     description: "Konzerte, Messen, Festivals",
-    color: "#fbbf24",
-    bg: "rgba(251, 191, 36, 0.12)",
+    className: "text-amber-400 bg-amber-500/10 border-amber-400/20",
   },
 };
 

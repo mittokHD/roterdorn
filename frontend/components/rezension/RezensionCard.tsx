@@ -30,8 +30,7 @@ export default function RezensionCard({ rezension }: RezensionCardProps) {
             />
           ) : (
             <div
-              className="absolute inset-0 flex items-center justify-center text-4xl"
-              style={{ background: "var(--bg-tertiary)" }}
+              className="absolute inset-0 flex items-center justify-center text-4xl bg-surface-tertiary"
             >
               {meta.icon}
             </div>
@@ -44,11 +43,7 @@ export default function RezensionCard({ rezension }: RezensionCardProps) {
 
           {/* Gradient overlay at bottom */}
           <div
-            className="absolute inset-x-0 bottom-0 h-24"
-            style={{
-              background:
-                "linear-gradient(to top, var(--bg-glass) 0%, transparent 100%)",
-            }}
+            className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[var(--bg-glass)] to-transparent"
           />
         </div>
 
@@ -59,16 +54,14 @@ export default function RezensionCard({ rezension }: RezensionCardProps) {
           </div>
 
           <h3
-            className="font-bold text-base leading-snug mb-1 line-clamp-2 transition-colors duration-200 group-hover:text-[var(--text-accent)]"
-            style={{ color: "var(--text-primary)" }}
+            className="font-bold text-base leading-snug mb-1 line-clamp-2 transition-colors duration-200 group-hover:text-text-accent text-text-primary"
           >
             {rezension.title}
           </h3>
 
           {rezension.autor && (
             <p
-              className="text-sm mb-3"
-              style={{ color: "var(--text-muted)" }}
+              className="text-sm mb-3 text-text-muted"
             >
               von {rezension.autor.name}
             </p>
@@ -80,12 +73,7 @@ export default function RezensionCard({ rezension }: RezensionCardProps) {
               {rezension.genres.slice(0, 3).map((genre) => (
                 <span
                   key={genre.id}
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{
-                    background: "var(--bg-tertiary)",
-                    color: "var(--text-muted)",
-                    border: "1px solid var(--border-subtle)",
-                  }}
+                  className="text-xs px-2 py-0.5 rounded-full bg-surface-tertiary text-text-muted border border-border-subtle"
                 >
                   {genre.name}
                 </span>

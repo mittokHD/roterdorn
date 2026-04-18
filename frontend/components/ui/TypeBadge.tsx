@@ -11,14 +11,9 @@ export default function TypeBadge({ type, size = "md" }: TypeBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full font-medium ${
+      className={`inline-flex items-center gap-1.5 rounded-full font-medium border ${
         size === "sm" ? "text-xs px-2.5 py-0.5" : "text-sm px-3 py-1"
-      }`}
-      style={{
-        background: meta.bg,
-        color: meta.color,
-        border: `1px solid ${meta.color}20`,
-      }}
+      } ${meta.className}`}
     >
       <span>{meta.icon}</span>
       {type}

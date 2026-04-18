@@ -65,12 +65,11 @@ export default function SuchePage() {
       {/* Header */}
       <div className="mb-10 animate-fade-in-up">
         <h1
-          className="text-3xl sm:text-4xl font-black mb-3"
-          style={{ color: "var(--text-primary)" }}
+          className="text-3xl sm:text-4xl font-black mb-3 text-text-primary"
         >
           🔍 Suche
         </h1>
-        <p className="text-base" style={{ color: "var(--text-secondary)" }}>
+        <p className="text-base text-text-secondary">
           Durchsuche alle Rezensionen nach Titel.
         </p>
       </div>
@@ -83,25 +82,13 @@ export default function SuchePage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Titel eingeben..."
-            className="flex-1 rounded-xl px-5 py-3 text-sm outline-none transition-all duration-300 focus:ring-2"
-            style={{
-              background: "var(--bg-tertiary)",
-              color: "var(--text-primary)",
-              border: "1px solid var(--border-default)",
-              // @ts-expect-error -- CSS custom property
-              "--tw-ring-color": "var(--brand-500)",
-            }}
+            className="flex-1 rounded-xl px-5 py-3 text-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-brand-500 bg-surface-tertiary text-text-primary border border-border-default"
             id="search-input"
           />
           <button
             type="submit"
             disabled={isLoading || !query.trim()}
-            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-            style={{
-              background: "var(--brand-500)",
-              color: "white",
-              boxShadow: "var(--shadow-brand)",
-            }}
+            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 bg-brand-500 text-white shadow-[0_0_24px_var(--shadow-brand)]"
             id="search-submit"
           >
             {isLoading ? (
@@ -130,7 +117,7 @@ export default function SuchePage() {
 
       {!isLoading && hasSearched && results.length > 0 && (
         <>
-          <p className="mb-6 text-sm" style={{ color: "var(--text-muted)" }}>
+          <p className="mb-6 text-sm text-text-muted">
             {results.length} Ergebnis{results.length !== 1 ? "se" : ""} für &quot;{query}&quot;
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">

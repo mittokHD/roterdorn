@@ -13,16 +13,10 @@ export default function CommentSection({
 }: CommentSectionProps) {
   return (
     <section id="kommentare">
-      <h2
-        className="text-2xl font-bold mb-8"
-        style={{ color: "var(--text-primary)" }}
-      >
+      <h2 className="text-2xl font-bold mb-8 text-text-primary">
         Kommentare
         {kommentare.length > 0 && (
-          <span
-            className="ml-2 text-base font-normal"
-            style={{ color: "var(--text-muted)" }}
-          >
+          <span className="ml-2 text-base font-normal text-text-muted">
             ({kommentare.length})
           </span>
         )}
@@ -34,42 +28,27 @@ export default function CommentSection({
           {kommentare.map((kommentar) => (
             <div
               key={kommentar.id}
-              className="rounded-xl p-5"
-              style={{
-                background: "var(--bg-tertiary)",
-                border: "1px solid var(--border-subtle)",
-              }}
+              className="rounded-xl p-5 bg-surface-tertiary border border-border-subtle"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold"
-                    style={{
-                      background: "var(--brand-500)",
-                      color: "white",
-                    }}
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-brand-500 text-white"
                   >
                     {kommentar.name.charAt(0).toUpperCase()}
                   </div>
-                  <span
-                    className="text-sm font-medium"
-                    style={{ color: "var(--text-primary)" }}
-                  >
+                  <span className="text-sm font-medium text-text-primary">
                     {kommentar.name}
                   </span>
                 </div>
                 <time
-                  className="text-xs"
-                  style={{ color: "var(--text-muted)" }}
+                  className="text-xs text-text-muted"
                   dateTime={kommentar.createdAt}
                 >
                   {formatDateShort(kommentar.createdAt)}
                 </time>
               </div>
-              <p
-                className="text-sm leading-relaxed"
-                style={{ color: "var(--text-secondary)" }}
-              >
+              <p className="text-sm leading-relaxed text-text-secondary">
                 {kommentar.text}
               </p>
             </div>
@@ -77,12 +56,7 @@ export default function CommentSection({
         </div>
       ) : (
         <div
-          className="rounded-xl p-8 text-center mb-10"
-          style={{
-            background: "var(--bg-tertiary)",
-            border: "1px solid var(--border-subtle)",
-            color: "var(--text-muted)",
-          }}
+          className="rounded-xl p-8 text-center mb-10 bg-surface-tertiary border border-border-subtle text-text-muted"
         >
           <p className="text-sm">
             Noch keine Kommentare. Sei der Erste!

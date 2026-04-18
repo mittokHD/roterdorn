@@ -4,8 +4,7 @@ export default function Loading() {
       <div className="relative flex items-center justify-center">
         {/* Outer glowing ring */}
         <div 
-          className="absolute inset-0 rounded-full animate-ping opacity-20"
-          style={{ background: "var(--brand-500)", transform: "scale(1.5)" }}
+          className="absolute inset-0 rounded-full animate-ping opacity-20 bg-brand-500 scale-150"
         />
         {/* Inner spinning ring */}
         <div 
