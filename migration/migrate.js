@@ -16,6 +16,7 @@ const DB_NAME = process.env.MYSQL_DATABASE || 'wp_legacy';
 
 const STRAPI_URL = process.env.STRAPI_MIGRATION_URL || `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}/api`;
 const STRAPI_TOKEN = process.env.STRAPI_WRITE_TOKEN || '';
+const PEXELS_API_KEY = process.env.PEXELS_API_KEY || '';
 
 const turndownService = new TurndownService();
 
@@ -173,41 +174,52 @@ function parseWpDate(dateStr) {
   return `${y}-${m}-${d}`;
 }
 
-// Hilfsfunktion: Lade ein Stock-Foto passend zur Kategorie von einer freien API herunter
-// und lade es als Asset in die Strapi Media-Library hoch.
+// Hilfsfunktion: Sucht ein passendes Bild via Pexels (zuerst nach Titel, dann Kategorie-Fallback)
+// und lädt es als Asset in die Strapi Media-Library hoch.
 async function uploadRandomImage(title, type) {
   try {
-    // Keywords passend zur Kategorie mappen
-    const keywordMap = {
-      "Buch": "book,reading,library",
-      "Film": "movie,cinema,film",
-      "Musik": "music,concert,vinyl",
-      "Spiel": "gaming,videogame,console",
-      "Event": "event,festival,stage"
+    if (!PEXELS_API_KEY) throw new Error("PEXELS_API_KEY fehlt in der .env");
+
+    const fallbackKeywords = {
+      "Buch": "book reading",
+      "Film": "movie cinema",
+      "Musik": "music concert",
+      "Spiel": "video game gaming",
+      "Event": "event festival"
     };
-    const keyword = keywordMap[type] || "art,abstract";
 
-    // Nutze loremflickr als freie (und API-Key freie) Alternative zu Unsplash Source
-    const imageUrl = `https://loremflickr.com/1280/720/${keyword}?random=${Math.floor(Math.random() * 10000)}`;
+    async function searchPexels(query) {
+      const res = await fetch(
+        `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`,
+        { headers: { Authorization: PEXELS_API_KEY } }
+      );
+      if (!res.ok) throw new Error(`Pexels API Fehler: ${res.status}`);
+      const data = await res.json();
+      return data.photos?.[0]?.src?.large2x || null;
+    }
 
-    console.log(`   📸 Suche Stock-Foto für [${type}]...`);
+    console.log(`   📸 Suche Pexels-Bild für "${title}" [${type}]...`);
+
+    // Zuerst nach dem Titel suchen, bei keinem Ergebnis Kategorie-Fallback
+    let imageUrl = await searchPexels(title);
+    if (!imageUrl) {
+      console.log(`   ↩️  Kein Ergebnis für Titel, nutze Kategorie-Fallback...`);
+      imageUrl = await searchPexels(fallbackKeywords[type] || "art");
+    }
+    if (!imageUrl) throw new Error("Kein Bild gefunden");
+
     const imgRes = await fetch(imageUrl);
     if (!imgRes.ok) throw new Error("Fehler beim Herunterladen des Bildes");
 
-    // Bilddaten (Blob/Buffer) auslesen
     const blob = await imgRes.blob();
 
-    // FormData für Strapi Upload zusammenbauen
     const formData = new FormData();
     const safeName = slugify(title, { lower: true, strict: true }) || 'cover';
     formData.append('files', blob, `${safeName}.jpg`);
 
-    // Upload an Strapi's /api/upload Endpunkt
     const uploadRes = await fetch(`${STRAPI_URL}/upload`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${STRAPI_TOKEN}`
-      },
+      headers: { 'Authorization': `Bearer ${STRAPI_TOKEN}` },
       body: formData
     });
 

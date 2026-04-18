@@ -1,24 +1,39 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { STRAPI_INTERNAL_URL, STRAPI_WRITE_TOKEN } from "@/lib/config";
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    // Auth-Check: JWT aus Cookie lesen und bei Strapi validieren
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auth_token")?.value;
 
-    // Validate required fields AND honeypot
-    const { name, text, website, rezensionId } = body;
-
-    // BOT PROTECTION (Honeypot) - If 'website' is filled, it's a spambot.
-    if (website && website.length > 0) {
-      // Fake a success response to fool the bot into thinking it worked!
-      return NextResponse.json({ success: true, fake: true }, { status: 201 });
+    if (!token) {
+      return NextResponse.json(
+        { error: "Du musst angemeldet sein, um einen Kommentar zu schreiben." },
+        { status: 401 }
+      );
     }
 
-    if (!name || typeof name !== "string" || name.trim().length < 2) {
+    const userRes = await fetch(`${STRAPI_INTERNAL_URL}/api/users/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!userRes.ok) {
       return NextResponse.json(
-        { error: "Name muss mindestens 2 Zeichen lang sein." },
-        { status: 400 }
+        { error: "Ungültige Sitzung. Bitte erneut anmelden." },
+        { status: 401 }
       );
+    }
+
+    const strapiUser = await userRes.json();
+
+    const body = await request.json();
+    const { text, website, rezensionId } = body;
+
+    // Honeypot
+    if (website && website.length > 0) {
+      return NextResponse.json({ success: true, fake: true }, { status: 201 });
     }
 
     if (!text || typeof text !== "string" || text.trim().length < 3) {
@@ -35,7 +50,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Forward to Strapi with write token (not exposed to client)
     const strapiRes = await fetch(`${STRAPI_INTERNAL_URL}/api/kommentare`, {
       method: "POST",
       headers: {
@@ -46,7 +60,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         data: {
-          name: name.trim(),
+          name: strapiUser.username,
           text: text.trim(),
           isApproved: false,
           rezension: {

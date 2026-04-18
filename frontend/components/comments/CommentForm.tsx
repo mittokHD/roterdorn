@@ -2,45 +2,34 @@
 
 import { useState } from "react";
 import { useCommentSubmit } from "@/hooks/useCommentSubmit";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CommentFormProps {
   rezensionId: string;
 }
 
 export default function CommentForm({ rezensionId }: CommentFormProps) {
-  // 1. Logik über Custom Hook abstrahiert
+  const { user } = useAuth();
   const { error, isLoading, isSuccess, submitComment, resetStatus } = useCommentSubmit();
-
-  // 2. Formular-State gebündelt verwalten
-  const [formData, setFormData] = useState({
-    name: "",
-    text: "",
-    website: "", // Honeypot
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const [text, setText] = useState("");
 
   const handleReset = () => {
-    setFormData({ name: "", text: "", website: "" });
+    setText("");
     resetStatus();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.text.trim()) return;
+    if (!text.trim() || !user) return;
 
     await submitComment({
-      ...formData,
-      name: formData.name.trim(),
-      text: formData.text.trim(),
+      name: user.username,
+      text: text.trim(),
+      website: "",
       rezensionId,
     });
-    
-    // Formular nach Erfolg leeren
-    setFormData({ name: "", text: "", website: "" });
+
+    setText("");
   };
 
   return (
@@ -51,7 +40,7 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
 
       {isSuccess ? (
         <div className="rounded-xl p-5 text-center bg-[#22c55e1a] border border-[#22c55e4d] text-green-500">
-          <p className="text-sm font-medium mb-1">✅ Kommentar eingereicht!</p>
+          <p className="text-sm font-medium mb-1">Kommentar eingereicht!</p>
           <p className="text-xs text-[color:var(--text-muted)]">
             Dein Kommentar wird nach Freigabe angezeigt.
           </p>
@@ -64,51 +53,19 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="comment-name"
-              className="block text-sm font-medium mb-1.5 text-[color:var(--text-secondary)]"
-            >
-              Name
-            </label>
-            <input
-              id="comment-name"
-              name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Dein Name"
-              required
-              className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-[color:var(--brand-500)] bg-[color:var(--bg-tertiary)] text-[color:var(--text-primary)] border border-[color:var(--border-default)]"
-            />
-          </div>
-
-          {/* Honeypot Field */}
-          <div aria-hidden="true" className="absolute -left-[9999px] -top-[9999px]">
-            <label htmlFor="website">Website</label>
-            <input
-              id="website"
-              name="website"
-              type="text"
-              tabIndex={-1}
-              autoComplete="off"
-              value={formData.website}
-              onChange={handleChange}
-            />
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-brand-500 text-white">
+              {user?.username.charAt(0).toUpperCase()}
+            </div>
+            <span className="text-sm text-text-secondary">{user?.username}</span>
           </div>
 
           <div>
-            <label
-              htmlFor="comment-text"
-              className="block text-sm font-medium mb-1.5 text-[color:var(--text-secondary)]"
-            >
-              Kommentar
-            </label>
             <textarea
               id="comment-text"
               name="text"
-              value={formData.text}
-              onChange={handleChange}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
               placeholder="Dein Kommentar..."
               required
               rows={4}
@@ -124,7 +81,7 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
 
           <button
             type="submit"
-            disabled={isLoading || !formData.name.trim() || !formData.text.trim()}
+            disabled={isLoading || !text.trim()}
             className="px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 bg-[color:var(--brand-500)] text-white shadow-[0_0_15px_var(--brand-500)]"
             id="comment-submit"
           >

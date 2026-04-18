@@ -1,6 +1,6 @@
 import type { Kommentar } from "@/lib/types";
 import { formatDateShort } from "@/lib/constants";
-import CommentForm from "./CommentForm";
+import CommentGate from "./CommentGate";
 
 interface CommentSectionProps {
   rezensionId: string;
@@ -64,8 +64,8 @@ export default function CommentSection({
         </div>
       )}
 
-      {/* Comment Form */}
-      <CommentForm rezensionId={rezensionId} />
+      {/* Comment Form or Login Prompt */}
+      <CommentGate rezensionId={rezensionId} />
     </section>
   );
 }

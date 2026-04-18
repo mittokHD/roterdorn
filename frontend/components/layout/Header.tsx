@@ -2,14 +2,23 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { SearchIcon, UserIcon, MenuIcon, CloseIcon } from "@/components/ui/Icons";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isLoading, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <header
@@ -56,17 +65,8 @@ export default function Header() {
             })}
           </nav>
 
-          {/* Search, Admin & Mobile Toggle */}
+          {/* Search, Auth & Mobile Toggle */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/admin"
-              className="flex items-center justify-center rounded-lg p-2 transition-all duration-200 text-text-secondary hover:text-text-primary hover:bg-surface-tertiary"
-              aria-label="Admin Login"
-              title="Zum Admin-Dashboard"
-            >
-              <UserIcon />
-            </Link>
-
             <Link
               href="/suche"
               className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-200 border border-border-subtle bg-surface-tertiary text-text-secondary hover:border-border-hover hover:text-text-primary"
@@ -75,6 +75,31 @@ export default function Header() {
               <SearchIcon />
               <span className="hidden sm:inline">Suche</span>
             </Link>
+
+            {/* Auth Button */}
+            {!isLoading && (
+              user ? (
+                <div className="hidden md:flex items-center gap-2">
+                  <span className="text-sm text-text-secondary">
+                    {user.username}
+                  </span>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all duration-200 border border-border-subtle bg-surface-tertiary text-text-secondary hover:border-border-hover hover:text-text-primary"
+                  >
+                    Abmelden
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="hidden md:flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all duration-200 border border-border-subtle bg-surface-tertiary text-text-secondary hover:border-border-hover hover:text-text-primary"
+                >
+                  <UserIcon />
+                  Anmelden
+                </Link>
+              )
+            )}
 
             {/* Mobile menu button */}
             <button
@@ -111,6 +136,40 @@ export default function Header() {
                   </Link>
                 );
               })}
+
+              {/* Mobile Auth */}
+              {!isLoading && (
+                user ? (
+                  <>
+                    <div className="px-4 py-2 text-sm text-text-muted border-t border-border-subtle mt-1 pt-3">
+                      Angemeldet als <span className="text-text-primary font-medium">{user.username}</span>
+                    </div>
+                    <button
+                      onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
+                      className="px-4 py-2.5 rounded-lg text-sm font-medium text-left text-text-secondary hover:text-text-primary"
+                    >
+                      Abmelden
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="px-4 py-2.5 rounded-lg text-sm font-medium text-text-secondary border-t border-border-subtle mt-1 pt-3"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Anmelden
+                    </Link>
+                    <Link
+                      href="/registrieren"
+                      className="px-4 py-2.5 rounded-lg text-sm font-medium text-brand-500"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Registrieren
+                    </Link>
+                  </>
+                )
+              )}
             </div>
           </nav>
         )}
