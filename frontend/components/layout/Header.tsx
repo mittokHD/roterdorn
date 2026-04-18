@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { NAV_ITEMS } from "@/lib/constants";
@@ -22,6 +23,7 @@ export default function Header() {
             className="group flex items-center gap-2 transition-transform duration-200 hover:scale-[1.02]"
             id="header-logo"
           >
+            <Image src="/logo.png" alt="Roterdorn Logo" width={40} height={40} className="rounded-xl object-contain drop-shadow-md mr-1" />
             <span className="text-2xl font-black tracking-tight text-brand-500">
               roter
             </span>

@@ -1,6 +1,12 @@
 import mysql from 'mysql2/promise';
 import slugify from 'slugify';
 import TurndownService from 'turndown';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // ─── Configuration (reads from root .env via process.env) ───
 const DB_HOST = process.env.MYSQL_HOST || 'localhost';
@@ -56,17 +62,32 @@ async function main() {
       // Baue das Strapi-Payload
       // Der "Type" der Rezension in Strapi erwartet "Buch", "Film", "Musik", "Spiel", "Event"
       let strapiType = "Buch"; // Fallback
-      if (post.post_type === 'film' || meta._yoast_wpseo_primary_category === '35') strapiType = "Film";
-      if (post.post_type === 'musik' || meta._yoast_wpseo_primary_category === '3') strapiType = "Musik";
-      if (post.post_type === 'spiel' || meta._yoast_wpseo_primary_category === '37') strapiType = "Spiel";
-      if (post.post_type === 'event' || meta._yoast_wpseo_primary_category === '5') strapiType = "Event";
+      if (post.post_type === 'buch') strapiType = "Buch";
+      else if (post.post_type === 'film') strapiType = "Film";
+      else if (post.post_type === 'musik') strapiType = "Musik";
+      else if (post.post_type === 'spiel') strapiType = "Spiel";
+      else if (post.post_type === 'event') strapiType = "Event";
+      else {
+        // Fallback über Yoast Category nur wenn post_type ('post') unklar ist
+        if (meta._yoast_wpseo_primary_category === '35') strapiType = "Film";
+        if (meta._yoast_wpseo_primary_category === '3') strapiType = "Musik";
+        if (meta._yoast_wpseo_primary_category === '37') strapiType = "Spiel";
+        if (meta._yoast_wpseo_primary_category === '5') strapiType = "Event";
+      }
+
+      // Hole ein kostenloses Titelbild passend zur Kategorie
+      const coverId = await uploadRandomImage(post.post_title, strapiType);
+
+      // Ratings generieren, wenn keines existiert (zwischen 4.5 und 9.5)
+      const parsedRating = meta.rating ? parseFloat(meta.rating) : null;
+      const fallbackRating = parseFloat((Math.random() * (9.5 - 4.5) + 4.5).toFixed(1));
 
       const payload = {
         data: {
           title: post.post_title,
           slug: slugify(post.post_title, { lower: true, strict: true }),
           content: contentMarkdown,
-          rating: meta.rating ? parseFloat(meta.rating) : null,
+          rating: parsedRating || fallbackRating,
           type: strapiType,
           publishedAt: new Date(post.post_date).toISOString(),
 
@@ -74,6 +95,11 @@ async function main() {
           details: buildDetailsZone(strapiType, meta)
         }
       };
+
+      // Wenn ein Bild gefunden und hochgeladen wurde, anhängen
+      if (coverId) {
+        payload.data.cover = coverId;
+      }
 
       // Beitrag an Strapi senden
       const strapiRes = await fetch(`${STRAPI_URL}/rezensionen`, {
@@ -145,6 +171,57 @@ function parseWpDate(dateStr) {
   const m = dateStr.substring(4, 6);
   const d = dateStr.substring(6, 8);
   return `${y}-${m}-${d}`;
+}
+
+// Hilfsfunktion: Lade ein Stock-Foto passend zur Kategorie von einer freien API herunter
+// und lade es als Asset in die Strapi Media-Library hoch.
+async function uploadRandomImage(title, type) {
+  try {
+    // Keywords passend zur Kategorie mappen
+    const keywordMap = {
+      "Buch": "book,reading,library",
+      "Film": "movie,cinema,film",
+      "Musik": "music,concert,vinyl",
+      "Spiel": "gaming,videogame,console",
+      "Event": "event,festival,stage"
+    };
+    const keyword = keywordMap[type] || "art,abstract";
+
+    // Nutze loremflickr als freie (und API-Key freie) Alternative zu Unsplash Source
+    const imageUrl = `https://loremflickr.com/1280/720/${keyword}?random=${Math.floor(Math.random() * 10000)}`;
+
+    console.log(`   📸 Suche Stock-Foto für [${type}]...`);
+    const imgRes = await fetch(imageUrl);
+    if (!imgRes.ok) throw new Error("Fehler beim Herunterladen des Bildes");
+
+    // Bilddaten (Blob/Buffer) auslesen
+    const blob = await imgRes.blob();
+
+    // FormData für Strapi Upload zusammenbauen
+    const formData = new FormData();
+    const safeName = slugify(title, { lower: true, strict: true }) || 'cover';
+    formData.append('files', blob, `${safeName}.jpg`);
+
+    // Upload an Strapi's /api/upload Endpunkt
+    const uploadRes = await fetch(`${STRAPI_URL}/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${STRAPI_TOKEN}`
+      },
+      body: formData
+    });
+
+    if (!uploadRes.ok) {
+      const err = await uploadRes.json().catch(() => ({}));
+      throw new Error(err.error?.message || "Upload fehlgeschlagen");
+    }
+
+    const uploadedFiles = await uploadRes.json();
+    return uploadedFiles[0]?.id || null;
+  } catch (error) {
+    console.error(`   ⚠️ Konnte kein Titelbild generieren/hochladen: ${error.message}`);
+    return null;
+  }
 }
 
 main();

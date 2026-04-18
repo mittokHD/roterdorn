@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { NAV_ITEMS } from "@/lib/constants";
 
 export default function Footer() {
@@ -12,7 +13,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <Link href="/" className="inline-block group">
+            <Link href="/" className="inline-flex items-center group">
+              <Image src="/logo.png" alt="Roterdorn Logo" width={32} height={32} className="rounded-lg object-contain mr-3 drop-shadow-md" />
               <span className="text-xl font-black text-brand-500">
                 roter
               </span>

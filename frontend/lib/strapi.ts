@@ -184,5 +184,9 @@ export async function searchRezensionen(
 export function getStrapiMediaUrl(url: string | undefined | null): string {
   if (!url) return "/placeholder.jpg";
   if (url.startsWith("http")) return url;
-  return `${getStrapiBaseUrl()}${url}`;
+  
+  // Wir geben relative URLs (z.B. /uploads/...) zurück, damit sie über den 
+  // Next.js Rewrite in next.config.ts direkt durch den Proxy laufen.
+  // Das verhindert den strengen "resolved to private ip" Block in Next.js 14+
+  return url;
 }

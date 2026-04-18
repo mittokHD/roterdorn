@@ -22,6 +22,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/uploads/:path*",
+        destination: "http://strapi:1337/uploads/:path*",
+      },
+    ];
+  },
   async redirects() {
     const adminUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}/admin/auth/login`;
     return [

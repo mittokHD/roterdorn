@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import type { Rezension } from "@/lib/types";
-import { STRAPI_PUBLIC_URL } from "@/lib/config";
 import RezensionCard from "@/components/rezension/RezensionCard";
 import EmptyState from "@/components/ui/EmptyState";
 import { SpinnerIcon } from "@/components/ui/Icons";
@@ -35,11 +34,7 @@ export default function SuchePage() {
       setHasSearched(true);
 
       try {
-        const res = await fetch(
-          `${STRAPI_PUBLIC_URL}/api/rezensionen?filters[title][$containsi]=${encodeURIComponent(
-            debouncedQuery
-          )}&populate[cover]=true&populate[autor]=true&populate[genres]=true&sort=publishedAt:desc&pagination[pageSize]=20`
-        );
+        const res = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`);
 
         if (!res.ok) throw new Error("Suche fehlgeschlagen");
 
