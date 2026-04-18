@@ -77,6 +77,7 @@ services:
       - ./frontend/lib:/opt/app/lib
       - ./frontend/public:/opt/app/public
       - ./frontend/hooks:/opt/app/hooks
+      - ./frontend/contexts:/opt/app/contexts
       - ./frontend/next.config.ts:/opt/app/next.config.ts
       - ./frontend/tsconfig.json:/opt/app/tsconfig.json
       - ./frontend/postcss.config.mjs:/opt/app/postcss.config.mjs
