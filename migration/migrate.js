@@ -3,10 +3,13 @@ import slugify from 'slugify';
 import TurndownService from 'turndown';
 import dotenv from 'dotenv';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 dotenv.config({ path: path.join(__dirname, '../.env') });
+
+const migrationConfig = await import(pathToFileURL(path.join(__dirname, '../migration.config.json')), { with: { type: 'json' } }).then(m => m.default);
+const GENERATE_IMAGES = migrationConfig.generateImages === true;
 
 // ─── Configuration (reads from root .env via process.env) ───
 const DB_HOST = process.env.MYSQL_HOST || 'localhost';
@@ -76,8 +79,9 @@ async function main() {
         if (meta._yoast_wpseo_primary_category === '5') strapiType = "Event";
       }
 
-      // Hole ein kostenloses Titelbild passend zur Kategorie
-      const coverId = await uploadRandomImage(post.post_title, strapiType);
+      // Hole ein kostenloses Titelbild passend zur Kategorie (nur wenn in migration.config.json aktiviert)
+      const coverId = GENERATE_IMAGES ? await uploadRandomImage(post.post_title, strapiType) : null;
+      if (!GENERATE_IMAGES) console.log(`   🚫 Bildgenerierung deaktiviert (migration.config.json → generateImages: false)`);
 
       // Ratings generieren, wenn keines existiert (zwischen 4.5 und 9.5)
       const parsedRating = meta.rating ? parseFloat(meta.rating) : null;
