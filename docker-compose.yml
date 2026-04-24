@@ -11,9 +11,9 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - '5432:5432'
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}"]
+      test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_NAME}']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,7 +26,7 @@ services:
     container_name: roterdorn-strapi
     restart: unless-stopped
     ports:
-      - "1337:1337"
+      - '1337:1337'
     environment:
       DATABASE_CLIENT: ${DATABASE_CLIENT}
       DATABASE_HOST: ${DATABASE_HOST}
@@ -62,7 +62,7 @@ services:
     container_name: roterdorn-nextjs
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       STRAPI_INTERNAL_URL: ${STRAPI_INTERNAL_URL}
       NEXT_PUBLIC_STRAPI_URL: ${NEXT_PUBLIC_STRAPI_URL}
@@ -89,12 +89,12 @@ services:
   mysql-legacy:
     image: mysql:8.0
     container_name: roterdorn-mysql-legacy
-    restart: "no" # Only needed during migration
+    restart: 'no' # Only needed during migration
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: wp_legacy
     ports:
-      - "3306:3306"
+      - '3308:3306'
     volumes:
       - ./dorn_db.sql:/docker-entrypoint-initdb.d/dump.sql
 

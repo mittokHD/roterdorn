@@ -4,7 +4,9 @@ WORKDIR /opt/app
 
 # Copy package files and install dependencies
 COPY package.json package-lock.json* ./
-RUN npm install --verbose
+RUN npm config set registry http://registry.npmjs.org/
+RUN npm install --verbose --strict-ssl=false
+
 
 # Copy the rest of the application
 COPY . .

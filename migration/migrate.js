@@ -3,239 +3,216 @@ import slugify from 'slugify';
 import TurndownService from 'turndown';
 import dotenv from 'dotenv';
 import path from 'path';
-import { fileURLToPath, pathToFileURL } from 'url';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// --- Pfad-Konfiguration ---
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// .env aus dem Root-Verzeichnis laden
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-const migrationConfig = await import(pathToFileURL(path.join(__dirname, '../migration.config.json')), { with: { type: 'json' } }).then(m => m.default);
+// Sicherer Import der migration.config.json
+const configPath = path.join(__dirname, '../migration.config.json');
+const migrationConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
 const GENERATE_IMAGES = migrationConfig.generateImages === true;
 
-// ─── Configuration (reads from root .env via process.env) ───
-const DB_HOST = process.env.MYSQL_HOST || 'localhost';
-const DB_USER = process.env.MYSQL_USER || 'root';
-const DB_PASSWORD = process.env.MYSQL_PASSWORD || 'root';
-const DB_NAME = process.env.MYSQL_DATABASE || 'wp_legacy';
+// --- Umgebungsvariablen ---
+const {
+  MYSQL_HOST: DB_HOST = 'localhost',
+  MYSQL_USER: DB_USER = 'root',
+  MYSQL_PASSWORD: DB_PASSWORD = 'root',
+  MYSQL_DATABASE: DB_NAME = 'wp_legacy',
+  STRAPI_MIGRATION_URL,
+  NEXT_PUBLIC_STRAPI_URL,
+  STRAPI_WRITE_TOKEN: STRAPI_TOKEN = '',
+  PEXELS_API_KEY = '',
+} = process.env;
 
-const STRAPI_URL = process.env.STRAPI_MIGRATION_URL || `${process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}/api`;
-const STRAPI_TOKEN = process.env.STRAPI_WRITE_TOKEN || '';
-const PEXELS_API_KEY = process.env.PEXELS_API_KEY || '';
+const STRAPI_URL =
+  STRAPI_MIGRATION_URL || `${NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337'}/api`;
 
 const turndownService = new TurndownService();
 
 async function main() {
-  console.log('🔄 Verbinde zur lokalen WordPress Legacy MySQL...');
-  const connection = await mysql.createConnection({
-    host: DB_HOST,
-    user: DB_USER,
-    password: DB_PASSWORD,
-    database: DB_NAME
-  });
+  let connection;
+  try {
+    console.log('🔄 Verbinde zur WordPress Datenbank...');
+    connection = await mysql.createConnection({
+      host: DB_HOST,
+      user: DB_USER,
+      password: DB_PASSWORD,
+      database: DB_NAME,
+      waitForConnections: true,
+    });
 
-  console.log('✅ Verbunden. Lese Beiträge aus...');
+    console.log('✅ Verbunden. Lese Beiträge aus...');
 
-  // Hole alle veröffentlichten Beiträge, die keine Revisionen/Seiten sind
-  const [posts] = await connection.execute(`
-    SELECT ID, post_title, post_content, post_date, post_type
-    FROM wp_posts 
-    WHERE post_status = 'publish' 
-      AND post_type IN ('post', 'buch', 'film', 'musik', 'spiel', 'event')
-  `);
+    const [posts] = await connection.execute(`
+      SELECT ID, post_title, post_content, post_date, post_type
+      FROM wp_posts 
+      WHERE post_status = 'publish' 
+        AND post_type IN ('post', 'buch', 'film', 'musik', 'spiel', 'event')
+    `);
 
-  console.log(`📌 ${posts.length} Beiträge gefunden. Starte Migration...\n`);
+    console.log(`📌 ${posts.length} Beiträge gefunden. Starte Migration...\n`);
 
-  for (const post of posts) {
-    try {
-      console.log(`Bearbeite: "${post.post_title}" (Typ: ${post.post_type})`);
+    for (const post of posts) {
+      try {
+        console.log(`🚀 Bearbeite: "${post.post_title}" (${post.post_type})`);
 
-      // Hole alle Meta-Werte (ACF) zu diesem Beitrag
-      const [metaData] = await connection.execute(
-        `SELECT meta_key, meta_value FROM wp_postmeta WHERE post_id = ?`,
-        [post.ID]
-      );
+        // Meta-Daten laden
+        const [metaData] = await connection.execute(
+          `SELECT meta_key, meta_value FROM wp_postmeta WHERE post_id = ?`,
+          [post.ID],
+        );
 
-      // Konvertiere das MySQL Array in ein einfach nutzbares Objekt
-      const meta = {};
-      for (const m of metaData) {
-        meta[m.meta_key] = m.meta_value;
-      }
+        const meta = Object.fromEntries(metaData.map((m) => [m.meta_key, m.meta_value]));
 
-      // WP HTML zu Markdown / Strapi Blocks (Strapi v5 nutzt oft Blocks oder Rich Text Markdown)
-      const contentMarkdown = turndownService.turndown(post.post_content || '');
+        // HTML -> Markdown
+        const contentMarkdown = turndownService.turndown(post.post_content || '');
 
-      // Baue das Strapi-Payload
-      // Der "Type" der Rezension in Strapi erwartet "Buch", "Film", "Musik", "Spiel", "Event"
-      let strapiType = "Buch"; // Fallback
-      if (post.post_type === 'buch') strapiType = "Buch";
-      else if (post.post_type === 'film') strapiType = "Film";
-      else if (post.post_type === 'musik') strapiType = "Musik";
-      else if (post.post_type === 'spiel') strapiType = "Spiel";
-      else if (post.post_type === 'event') strapiType = "Event";
-      else {
-        // Fallback über Yoast Category nur wenn post_type ('post') unklar ist
-        if (meta._yoast_wpseo_primary_category === '35') strapiType = "Film";
-        if (meta._yoast_wpseo_primary_category === '3') strapiType = "Musik";
-        if (meta._yoast_wpseo_primary_category === '37') strapiType = "Spiel";
-        if (meta._yoast_wpseo_primary_category === '5') strapiType = "Event";
-      }
+        // Typ-Mapping
+        let strapiType = mapPostType(post.post_type, meta);
 
-      // Hole ein kostenloses Titelbild passend zur Kategorie (nur wenn in migration.config.json aktiviert)
-      const coverId = GENERATE_IMAGES ? await uploadRandomImage(post.post_title, strapiType) : null;
-      if (!GENERATE_IMAGES) console.log(`   🚫 Bildgenerierung deaktiviert (migration.config.json → generateImages: false)`);
+        // Bild-Handling
+        const coverId = GENERATE_IMAGES
+          ? await uploadRandomImage(post.post_title, strapiType)
+          : null;
 
-      // Ratings generieren, wenn keines existiert (zwischen 4.5 und 9.5)
-      const parsedRating = meta.rating ? parseFloat(meta.rating) : null;
-      const fallbackRating = parseFloat((Math.random() * (9.5 - 4.5) + 4.5).toFixed(1));
+        // Rating-Logik
+        const parsedRating = meta.rating ? parseFloat(meta.rating) : null;
+        const fallbackRating = parseFloat((Math.random() * 5 + 4.5).toFixed(1));
 
-      const payload = {
-        data: {
-          title: post.post_title,
-          slug: slugify(post.post_title, { lower: true, strict: true }),
-          content: contentMarkdown,
-          rating: parsedRating || fallbackRating,
-          type: strapiType,
-          publishedAt: new Date(post.post_date).toISOString(),
+        const payload = {
+          data: {
+            title: post.post_title,
+            slug: slugify(post.post_title, { lower: true, strict: true }),
+            content: contentMarkdown,
+            rating: parsedRating || fallbackRating,
+            type: strapiType,
+            publishedAt: new Date(post.post_date).toISOString(),
+            details: buildDetailsZone(strapiType, meta),
+            cover: coverId || undefined,
+          },
+        };
 
-          // Hier bauen wir die Dynamic Zone ('details') auf Basis veralteter ACF-Felder
-          details: buildDetailsZone(strapiType, meta)
+        const strapiRes = await fetch(`${STRAPI_URL}/rezensionen`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${STRAPI_TOKEN}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!strapiRes.ok) {
+          const errInfo = await strapiRes.json();
+          console.error(`❌ Strapi Fehler [${post.ID}]:`, JSON.stringify(errInfo.error));
+        } else {
+          console.log(`✅ Erfolg: ${post.post_title}`);
         }
-      };
-
-      // Wenn ein Bild gefunden und hochgeladen wurde, anhängen
-      if (coverId) {
-        payload.data.cover = coverId;
+      } catch (err) {
+        console.error(`❌ Fehler im Loop bei ID ${post.ID}:`, err.message);
       }
-
-      // Beitrag an Strapi senden
-      const strapiRes = await fetch(`${STRAPI_URL}/rezensionen`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${STRAPI_TOKEN}`
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!strapiRes.ok) {
-        const errInfo = await strapiRes.json();
-        console.error(`❌ Fehler bei "${post.post_title}":`, errInfo.error.message);
-      } else {
-        console.log(`✅ Strapi-Import erfolgreich: ${post.post_title}`);
-      }
-
-    } catch (e) {
-      console.error(`❌ Unerwarteter Fehler bei "${post.post_title}":`, e.message);
     }
+  } catch (err) {
+    console.error('❌ Kritischer Verbindungsfehler:', err.message);
+  } finally {
+    if (connection) await connection.end();
+    console.log('\n🎉 Migration beendet.');
+    process.exit(0);
   }
-
-  console.log('\n🎉 Migration abgeschlossen!');
-  process.exit(0);
 }
 
-// Hilfsfunktion: Wandelt WP ACF in Strapi Dynamic Zones um
+// --- Hilfsfunktionen ---
+
+function mapPostType(wpType, meta) {
+  const types = { buch: 'Buch', film: 'Film', musik: 'Musik', spiel: 'Spiel', event: 'Event' };
+  if (types[wpType]) return types[wpType];
+
+  const categoryMap = { 35: 'Film', 3: 'Musik', 37: 'Spiel', 5: 'Event' };
+  return categoryMap[meta._yoast_wpseo_primary_category] || 'Buch';
+}
+
 function buildDetailsZone(type, meta) {
   const zone = [];
-
-  if (type === 'Buch') {
-    zone.push({
+  const configs = {
+    Buch: {
       __component: 'details.book-details',
-      isbn: meta.isbn || null,
-      pages: meta.seitenzahl ? parseInt(meta.seitenzahl) : null,
-      publishedDate: parseWpDate(meta.erscheinungsdatum)
-    });
-  } else if (type === 'Film') {
-    zone.push({
+      isbn: meta.isbn,
+      pages: parseInt(meta.seitenzahl),
+      publishedDate: parseWpDate(meta.erscheinungsdatum),
+    },
+    Film: {
       __component: 'details.movie-details',
-      fsk: meta.fsk || null,
-      duration: meta.filmlaufzeit ? parseInt(meta.filmlaufzeit) : null
-    });
-  } else if (type === 'Musik') {
-    zone.push({
+      fsk: meta.fsk,
+      duration: parseInt(meta.filmlaufzeit),
+    },
+    Musik: {
       __component: 'details.music-details',
-      releaseYear: meta.erscheinungsdatum ? parseInt(meta.erscheinungsdatum.substring(0, 4)) : null
-    });
-  } else if (type === 'Spiel') {
-    zone.push({
-      __component: 'details.game-details'
-    });
-  } else if (type === 'Event') {
-    zone.push({
+      releaseYear: meta.erscheinungsdatum?.substring(0, 4),
+    },
+    Spiel: { __component: 'details.game-details' },
+    Event: {
       __component: 'details.event-details',
-      location: meta.ort || null,
-      eventDate: parseWpDate(meta.zeitstart)
-    });
-  }
+      location: meta.ort,
+      eventDate: parseWpDate(meta.zeitstart),
+    },
+  };
 
+  if (configs[type]) zone.push(configs[type]);
   return zone;
 }
 
-// Hilfsfunktion: WP ACF Datumsformat (YYYYMMDD) in ISO konvertieren
 function parseWpDate(dateStr) {
   if (!dateStr || dateStr.length < 8) return null;
-  const y = dateStr.substring(0, 4);
-  const m = dateStr.substring(4, 6);
-  const d = dateStr.substring(6, 8);
-  return `${y}-${m}-${d}`;
+  return `${dateStr.substring(0, 4)}-${dateStr.substring(4, 6)}-${dateStr.substring(6, 8)}`;
 }
 
-// Hilfsfunktion: Sucht ein passendes Bild via Pexels (zuerst nach Titel, dann Kategorie-Fallback)
-// und lädt es als Asset in die Strapi Media-Library hoch.
 async function uploadRandomImage(title, type) {
   try {
-    if (!PEXELS_API_KEY) throw new Error("PEXELS_API_KEY fehlt in der .env");
+    if (!PEXELS_API_KEY) return null;
 
-    const fallbackKeywords = {
-      "Buch": "book reading",
-      "Film": "movie cinema",
-      "Musik": "music concert",
-      "Spiel": "video game gaming",
-      "Event": "event festival"
+    const keywords = {
+      Buch: 'book',
+      Film: 'cinema',
+      Musik: 'concert',
+      Spiel: 'gaming',
+      Event: 'festival',
     };
+    const query = `${title} ${keywords[type] || ''}`;
 
-    async function searchPexels(query) {
-      const res = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`,
-        { headers: { Authorization: PEXELS_API_KEY } }
-      );
-      if (!res.ok) throw new Error(`Pexels API Fehler: ${res.status}`);
-      const data = await res.json();
-      return data.photos?.[0]?.src?.large2x || null;
-    }
+    const res = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`,
+      {
+        headers: { Authorization: PEXELS_API_KEY },
+      },
+    );
 
-    console.log(`   📸 Suche Pexels-Bild für "${title}" [${type}]...`);
-
-    // Zuerst nach dem Titel suchen, bei keinem Ergebnis Kategorie-Fallback
-    let imageUrl = await searchPexels(title);
-    if (!imageUrl) {
-      console.log(`   ↩️  Kein Ergebnis für Titel, nutze Kategorie-Fallback...`);
-      imageUrl = await searchPexels(fallbackKeywords[type] || "art");
-    }
-    if (!imageUrl) throw new Error("Kein Bild gefunden");
+    const data = await res.json();
+    const imageUrl = data.photos?.[0]?.src?.large2x;
+    if (!imageUrl) return null;
 
     const imgRes = await fetch(imageUrl);
-    if (!imgRes.ok) throw new Error("Fehler beim Herunterladen des Bildes");
-
-    const blob = await imgRes.blob();
+    const buffer = await imgRes.arrayBuffer();
 
     const formData = new FormData();
-    const safeName = slugify(title, { lower: true, strict: true }) || 'cover';
-    formData.append('files', blob, `${safeName}.jpg`);
+    const fileName = `${slugify(title, { lower: true, strict: true })}.jpg`;
+    formData.append('files', new Blob([buffer]), fileName);
 
-    const uploadRes = await fetch(`${STRAPI_URL}/upload`, {
+    const uploadRes = await fetch(`${STRAPI_URL.replace('/api', '')}/api/upload`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${STRAPI_TOKEN}` },
-      body: formData
+      headers: { Authorization: `Bearer ${STRAPI_TOKEN}` },
+      body: formData,
     });
 
-    if (!uploadRes.ok) {
-      const err = await uploadRes.json().catch(() => ({}));
-      throw new Error(err.error?.message || "Upload fehlgeschlagen");
-    }
-
-    const uploadedFiles = await uploadRes.json();
-    return uploadedFiles[0]?.id || null;
+    const uploadData = await uploadRes.json();
+    return uploadData[0]?.id || null;
   } catch (error) {
-    console.error(`   ⚠️ Konnte kein Titelbild generieren/hochladen: ${error.message}`);
+    console.error(` ⚠️ Bild-Upload fehlgeschlagen: ${error.message}`);
     return null;
   }
 }
