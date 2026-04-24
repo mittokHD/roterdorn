@@ -7,6 +7,7 @@ import { useState } from "react";
 import { NAV_ITEMS } from "@/lib/constants";
 import { SearchIcon, UserIcon, MenuIcon, CloseIcon } from "@/components/ui/Icons";
 import { useAuth } from "@/contexts/AuthContext";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 
 export default function Header() {
   const pathname = usePathname();
@@ -80,9 +81,12 @@ export default function Header() {
             {!isLoading && (
               user ? (
                 <div className="hidden md:flex items-center gap-2">
-                  <span className="text-sm text-text-secondary">
+                  <Link
+                    href="/profil"
+                    className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+                  >
                     {user.username}
-                  </span>
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all duration-200 border border-border-subtle bg-surface-tertiary text-text-secondary hover:border-border-hover hover:text-text-primary"
@@ -100,6 +104,8 @@ export default function Header() {
                 </Link>
               )
             )}
+
+            <ThemeToggle />
 
             {/* Mobile menu button */}
             <button
@@ -141,9 +147,13 @@ export default function Header() {
               {!isLoading && (
                 user ? (
                   <>
-                    <div className="px-4 py-2 text-sm text-text-muted border-t border-border-subtle mt-1 pt-3">
-                      Angemeldet als <span className="text-text-primary font-medium">{user.username}</span>
-                    </div>
+                    <Link
+                      href="/profil"
+                      className="px-4 py-2.5 rounded-lg text-sm font-medium text-text-secondary border-t border-border-subtle mt-1 pt-3"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Profil ({user.username})
+                    </Link>
                     <button
                       onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
                       className="px-4 py-2.5 rounded-lg text-sm font-medium text-left text-text-secondary hover:text-text-primary"

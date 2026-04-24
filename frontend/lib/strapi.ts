@@ -1,5 +1,6 @@
 import type {
   Rezension,
+  Genre,
   StrapiResponse,
   StrapiSingleResponse,
   RezensionType,
@@ -37,11 +38,12 @@ function buildQuery(params: {
     }
   }
 
-  // Filters
+  // Filters — supports dot-notation keys for relations, e.g. "genres.name" -> filters[genres][name]
   if (params.filters) {
     for (const [field, operators] of Object.entries(params.filters)) {
+      const fieldKey = field.split(".").map((f) => `[${f}]`).join("");
       for (const [op, val] of Object.entries(operators)) {
-        parts.push(`filters[${field}][${op}]=${encodeURIComponent(val)}`);
+        parts.push(`filters${fieldKey}[${op}]=${encodeURIComponent(val)}`);
       }
     }
   }
@@ -129,19 +131,59 @@ export async function getRezensionen(params?: {
 
 export async function getRezensionenByType(
   type: RezensionType,
-  params?: { page?: number; pageSize?: number }
+  params?: { page?: number; pageSize?: number; sort?: string; genre?: string }
 ): Promise<StrapiResponse<Rezension>> {
+  const filters: Record<string, Record<string, string>> = {
+    type: { $eq: type },
+  };
+  if (params?.genre) {
+    filters["genres.name"] = { $containsi: params.genre };
+  }
+
   const query = buildQuery({
     populate: REZENSION_POPULATE,
-    filters: { type: { $eq: type } },
-    sort: "publishedAt:desc",
-    pagination: { page: params?.page || 1, pageSize: params?.pageSize || 12 },
+    filters,
+    sort: params?.sort || "publishedAt:desc",
+    pagination: { page: params?.page || 1, pageSize: params?.pageSize || 100 },
   });
 
   return fetchStrapi<StrapiResponse<Rezension>>(
     `/rezensionen?${query}`,
     { tags: ["rezensionen"] }
   );
+}
+
+export async function getSimilarRezensionen(
+  type: RezensionType,
+  currentSlug: string,
+  limit = 4
+): Promise<StrapiResponse<Rezension>> {
+  const query = buildQuery({
+    populate: REZENSION_POPULATE,
+    filters: {
+      type: { $eq: type },
+      slug: { $ne: currentSlug },
+    },
+    sort: "rating:desc",
+    pagination: { page: 1, pageSize: limit },
+  });
+
+  return fetchStrapi<StrapiResponse<Rezension>>(
+    `/rezensionen?${query}`,
+    { tags: ["rezensionen"] }
+  );
+}
+
+export async function getGenres(): Promise<Genre[]> {
+  try {
+    const data = await fetchStrapi<StrapiResponse<Genre>>(
+      `/genres?sort=name:asc&pagination[pageSize]=100`,
+      { tags: ["genres"], revalidate: 3600 }
+    );
+    return data.data || [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getRezensionBySlug(

@@ -5,10 +5,12 @@ import type { Metadata } from "next";
 import { getRezensionBySlug, getStrapiMediaUrl } from "@/lib/strapi";
 import { TYPE_SLUG_MAP } from "@/lib/types";
 import { TYPE_META, formatDate } from "@/lib/constants";
+import { readingTime } from "@/lib/utils";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
 import DetailSection from "@/components/rezension/DetailSection";
 import CommentSection from "@/components/comments/CommentSection";
+import SimilarRezensionen from "@/components/rezension/SimilarRezensionen";
 
 interface PageProps {
   params: Promise<{ type: string; slug: string }>;
@@ -87,9 +89,12 @@ export default async function RezensionPage({ params }: PageProps) {
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <TypeBadge type={rezension.type} />
           <RatingBadge rating={rezension.rating} size="lg" />
-          <span className="text-sm text-text-muted">
-            {publishDate}
-          </span>
+          <span className="text-sm text-text-muted">{publishDate}</span>
+          {rezension.content && (
+            <span className="text-sm text-text-muted">
+              · {readingTime(rezension.content)} Min. Lesezeit
+            </span>
+          )}
         </div>
 
         {/* Title */}
@@ -163,6 +168,9 @@ export default async function RezensionPage({ params }: PageProps) {
             rezension.kommentare?.filter((k) => k.isApproved) || []
           }
         />
+
+        {/* Similar Reviews */}
+        <SimilarRezensionen type={rezension.type} currentSlug={rezension.slug} />
 
         {/* Back link */}
         <div className="mt-12">
