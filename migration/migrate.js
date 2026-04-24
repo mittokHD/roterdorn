@@ -1,7 +1,5 @@
 import mysql from 'mysql2/promise';
-import slugify from 'slugify';
 import TurndownService from 'turndown';
-import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -11,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // .env aus dem Root-Verzeichnis laden
-dotenv.config({ path: path.join(__dirname, '../.env') });
+process.loadEnvFile(path.join(__dirname, '../.env'));
 
 // Sicherer Import der migration.config.json
 const configPath = path.join(__dirname, '../migration.config.json');
@@ -25,6 +23,7 @@ const {
   MYSQL_USER: DB_USER = 'root',
   MYSQL_PASSWORD: DB_PASSWORD = 'root',
   MYSQL_DATABASE: DB_NAME = 'wp_legacy',
+  MYSQL_PORT: DB_PORT = 3308,
   STRAPI_MIGRATION_URL,
   NEXT_PUBLIC_STRAPI_URL,
   STRAPI_WRITE_TOKEN: STRAPI_TOKEN = '',
@@ -45,6 +44,7 @@ async function main() {
       user: DB_USER,
       password: DB_PASSWORD,
       database: DB_NAME,
+      port: parseInt(DB_PORT, 10),
       waitForConnections: true,
     });
 
@@ -77,6 +77,19 @@ async function main() {
         // Typ-Mapping
         let strapiType = mapPostType(post.post_type, meta);
 
+        const generatedSlug = generateSlug(post.post_title);
+
+        // Prüfen ob der Eintrag schon existiert (anhand des Slugs)
+        const checkRes = await fetch(`${STRAPI_URL}/rezensionen?filters[slug][$eq]=${generatedSlug}&publicationState=preview`, {
+          headers: { Authorization: `Bearer ${STRAPI_TOKEN}` }
+        });
+        const checkData = await checkRes.json();
+        
+        if (checkData?.data?.length > 0) {
+          console.log(`⏭️ Überspringe: "${post.post_title}" (existiert bereits)`);
+          continue;
+        }
+
         // Bild-Handling
         const coverId = GENERATE_IMAGES
           ? await uploadRandomImage(post.post_title, strapiType)
@@ -89,7 +102,7 @@ async function main() {
         const payload = {
           data: {
             title: post.post_title,
-            slug: slugify(post.post_title, { lower: true, strict: true }),
+            slug: generatedSlug,
             content: contentMarkdown,
             rating: parsedRating || fallbackRating,
             type: strapiType,
@@ -99,7 +112,7 @@ async function main() {
           },
         };
 
-        const strapiRes = await fetch(`${STRAPI_URL}/rezensionen`, {
+        let strapiRes = await fetch(`${STRAPI_URL}/rezensionen`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -109,8 +122,34 @@ async function main() {
         });
 
         if (!strapiRes.ok) {
-          const errInfo = await strapiRes.json();
-          console.error(`❌ Strapi Fehler [${post.ID}]:`, JSON.stringify(errInfo.error));
+          let errInfo = await strapiRes.json();
+          const isSlugError = errInfo?.error?.details?.errors?.some(e => 
+            e.path?.includes('slug') && e.message.includes('unique')
+          );
+
+          if (isSlugError) {
+            console.log(`⚠️ Slug Kollision (vermutlich Papierkorb oder Duplikat). Hänge ID an: "${generatedSlug}-${post.ID}"`);
+            payload.data.slug = `${generatedSlug}-${post.ID}`;
+            
+            strapiRes = await fetch(`${STRAPI_URL}/rezensionen`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${STRAPI_TOKEN}`,
+              },
+              body: JSON.stringify(payload),
+            });
+            
+            if (!strapiRes.ok) {
+              errInfo = await strapiRes.json();
+            }
+          }
+
+          if (!strapiRes.ok) {
+            console.error(`❌ Strapi Fehler [${post.ID}]:`, JSON.stringify(errInfo.error || errInfo));
+          } else {
+            console.log(`✅ Erfolg (Suffix hinzugefügt): ${post.post_title}`);
+          }
         } else {
           console.log(`✅ Erfolg: ${post.post_title}`);
         }
@@ -119,7 +158,7 @@ async function main() {
       }
     }
   } catch (err) {
-    console.error('❌ Kritischer Verbindungsfehler:', err.message);
+    console.error('❌ Kritischer Verbindungsfehler:', err);
   } finally {
     if (connection) await connection.end();
     console.log('\n🎉 Migration beendet.');
@@ -128,6 +167,16 @@ async function main() {
 }
 
 // --- Hilfsfunktionen ---
+
+function generateSlug(text) {
+  return text.toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // umlaute etc entfernen
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
 
 function mapPostType(wpType, meta) {
   const types = { buch: 'Buch', film: 'Film', musik: 'Musik', spiel: 'Spiel', event: 'Event' };
@@ -200,7 +249,7 @@ async function uploadRandomImage(title, type) {
     const buffer = await imgRes.arrayBuffer();
 
     const formData = new FormData();
-    const fileName = `${slugify(title, { lower: true, strict: true })}.jpg`;
+    const fileName = `${generateSlug(title)}.jpg`;
     formData.append('files', new Blob([buffer]), fileName);
 
     const uploadRes = await fetch(`${STRAPI_URL.replace('/api', '')}/api/upload`, {
