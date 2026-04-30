@@ -92,6 +92,7 @@ services:
     restart: 'no' # Only needed during migration
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_HOST: '%'
       MYSQL_DATABASE: wp_legacy
     ports:
       - '3308:3306'
