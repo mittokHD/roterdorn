@@ -1,8 +1,92 @@
-import type { DetailComponent } from "@/lib/types";
+import type {
+  DetailComponent,
+  BookDetails,
+  MovieDetails,
+  GameDetails,
+  MusicDetails,
+  EventDetails,
+} from "@/lib/types";
 
 interface DetailSectionProps {
   details: DetailComponent[];
 }
+
+// Lookup map instead of switch statement.
+// Adding a new detail type = add one entry here, nothing else changes.
+const DETAIL_RENDERERS: Record<string, (d: DetailComponent) => React.ReactNode> = {
+  "details.book-details": (d) => {
+    const { id, isbn, pages, publisher, publishedDate } = d as BookDetails;
+    return (
+      <DetailCard key={id} title="Buchdetails" icon="📖">
+        <DetailRow label="ISBN" value={isbn} />
+        <DetailRow label="Seiten" value={pages?.toString()} />
+        <DetailRow label="Verlag" value={publisher} />
+        <DetailRow
+          label="Erschienen"
+          value={publishedDate ? new Date(publishedDate).toLocaleDateString("de-DE") : null}
+        />
+      </DetailCard>
+    );
+  },
+
+  "details.movie-details": (d) => {
+    const { id, fsk, duration, director, releaseYear } = d as MovieDetails;
+    return (
+      <DetailCard key={id} title="Filmdetails" icon="🎬">
+        <DetailRow label="FSK" value={fsk ? `FSK ${fsk}` : null} />
+        <DetailRow label="Dauer" value={duration ? `${duration} Min.` : null} />
+        <DetailRow label="Regie" value={director} />
+        <DetailRow label="Jahr" value={releaseYear?.toString()} />
+      </DetailCard>
+    );
+  },
+
+  "details.game-details": (d) => {
+    const { id, platform, developer, publisher, releaseYear } = d as GameDetails;
+    return (
+      <DetailCard key={id} title="Spieldetails" icon="🎮">
+        <DetailRow label="Plattform" value={platform} />
+        <DetailRow label="Entwickler" value={developer} />
+        <DetailRow label="Publisher" value={publisher} />
+        <DetailRow label="Jahr" value={releaseYear?.toString()} />
+      </DetailCard>
+    );
+  },
+
+  "details.music-details": (d) => {
+    const { id, artist, label, tracks, releaseYear } = d as MusicDetails;
+    return (
+      <DetailCard key={id} title="Musikdetails" icon="🎵">
+        <DetailRow label="Künstler" value={artist} />
+        <DetailRow label="Label" value={label} />
+        <DetailRow label="Tracks" value={tracks?.toString()} />
+        <DetailRow label="Jahr" value={releaseYear?.toString()} />
+      </DetailCard>
+    );
+  },
+
+  "details.event-details": (d) => {
+    const { id, location, eventDate, organizer } = d as EventDetails;
+    return (
+      <DetailCard key={id} title="Eventdetails" icon="🎪">
+        <DetailRow label="Ort" value={location} />
+        <DetailRow
+          label="Datum"
+          value={
+            eventDate
+              ? new Date(eventDate).toLocaleDateString("de-DE", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })
+              : null
+          }
+        />
+        <DetailRow label="Veranstalter" value={organizer} />
+      </DetailCard>
+    );
+  },
+};
 
 export default function DetailSection({ details }: DetailSectionProps) {
   if (!details || details.length === 0) return null;
@@ -10,102 +94,8 @@ export default function DetailSection({ details }: DetailSectionProps) {
   return (
     <div className="space-y-4">
       {details.map((detail) => {
-        switch (detail.__component) {
-          case "details.book-details":
-            return (
-              <DetailCard key={detail.id} title="Buchdetails" icon="📖">
-                <DetailRow label="ISBN" value={detail.isbn} />
-                <DetailRow
-                  label="Seiten"
-                  value={detail.pages?.toString()}
-                />
-                <DetailRow label="Verlag" value={detail.publisher} />
-                <DetailRow
-                  label="Erschienen"
-                  value={
-                    detail.publishedDate
-                      ? new Date(detail.publishedDate).toLocaleDateString(
-                          "de-DE"
-                        )
-                      : null
-                  }
-                />
-              </DetailCard>
-            );
-
-          case "details.movie-details":
-            return (
-              <DetailCard key={detail.id} title="Filmdetails" icon="🎬">
-                <DetailRow label="FSK" value={detail.fsk ? `FSK ${detail.fsk}` : null} />
-                <DetailRow
-                  label="Dauer"
-                  value={
-                    detail.duration ? `${detail.duration} Min.` : null
-                  }
-                />
-                <DetailRow label="Regie" value={detail.director} />
-                <DetailRow
-                  label="Jahr"
-                  value={detail.releaseYear?.toString()}
-                />
-              </DetailCard>
-            );
-
-          case "details.game-details":
-            return (
-              <DetailCard key={detail.id} title="Spieldetails" icon="🎮">
-                <DetailRow label="Plattform" value={detail.platform} />
-                <DetailRow label="Entwickler" value={detail.developer} />
-                <DetailRow label="Publisher" value={detail.publisher} />
-                <DetailRow
-                  label="Jahr"
-                  value={detail.releaseYear?.toString()}
-                />
-              </DetailCard>
-            );
-
-          case "details.music-details":
-            return (
-              <DetailCard key={detail.id} title="Musikdetails" icon="🎵">
-                <DetailRow label="Künstler" value={detail.artist} />
-                <DetailRow label="Label" value={detail.label} />
-                <DetailRow
-                  label="Tracks"
-                  value={detail.tracks?.toString()}
-                />
-                <DetailRow
-                  label="Jahr"
-                  value={detail.releaseYear?.toString()}
-                />
-              </DetailCard>
-            );
-
-          case "details.event-details":
-            return (
-              <DetailCard key={detail.id} title="Eventdetails" icon="🎪">
-                <DetailRow label="Ort" value={detail.location} />
-                <DetailRow
-                  label="Datum"
-                  value={
-                    detail.eventDate
-                      ? new Date(detail.eventDate).toLocaleDateString(
-                          "de-DE",
-                          {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          }
-                        )
-                      : null
-                  }
-                />
-                <DetailRow label="Veranstalter" value={detail.organizer} />
-              </DetailCard>
-            );
-
-          default:
-            return null;
-        }
+        const renderer = DETAIL_RENDERERS[detail.__component];
+        return renderer ? renderer(detail) : null;
       })}
     </div>
   );
@@ -142,12 +132,8 @@ function DetailRow({
 
   return (
     <div>
-      <dt className="text-xs mb-0.5 text-text-muted">
-        {label}
-      </dt>
-      <dd className="text-sm font-medium text-text-primary">
-        {value}
-      </dd>
+      <dt className="text-xs mb-0.5 text-text-muted">{label}</dt>
+      <dd className="text-sm font-medium text-text-primary">{value}</dd>
     </div>
   );
 }

@@ -4,65 +4,56 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useFormSubmit } from "@/hooks/useFormSubmit";
+
+interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  passwordConfirm: string;
+}
 
 export default function RegisterPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterData>({
     username: "",
     email: "",
     password: "",
     passwordConfirm: "",
   });
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { submit, error, isLoading } = useFormSubmit(async (data: RegisterData) => {
+    if (data.password !== data.passwordConfirm) {
+      throw new Error("Passwörter stimmen nicht überein.");
+    }
+    if (data.password.length < 6) {
+      throw new Error("Passwort muss mindestens 6 Zeichen lang sein.");
+    }
+
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || "Registrierung fehlgeschlagen.");
+    login(json.user);
+    router.push("/");
+    router.refresh();
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-
-    if (formData.password !== formData.passwordConfirm) {
-      setError("Passwörter stimmen nicht überein.");
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError("Passwort muss mindestens 6 Zeichen lang sein.");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Registrierung fehlgeschlagen.");
-        return;
-      }
-
-      login(data.user);
-      router.push("/");
-      router.refresh();
-    } catch {
-      setError("Ein unerwarteter Fehler ist aufgetreten.");
-    } finally {
-      setIsLoading(false);
-    }
+    submit(formData);
   };
 
   return (

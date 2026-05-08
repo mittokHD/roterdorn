@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { STRAPI_INTERNAL_URL, STRAPI_API_TOKEN } from "@/lib/config";
+import { STRAPI_INTERNAL_URL } from "@/lib/config";
+import { getStrapiReadHeaders } from "@/lib/strapi";
 
 export async function GET() {
   const cookieStore = await cookies();
@@ -32,13 +33,9 @@ export async function GET() {
     "pagination[pageSize]": "50",
   });
 
-  const headers: HeadersInit = STRAPI_API_TOKEN
-    ? { Authorization: `Bearer ${STRAPI_API_TOKEN}` }
-    : {};
-
   const kommentareRes = await fetch(
     `${STRAPI_INTERNAL_URL}/api/kommentare?${query}`,
-    { headers }
+    { headers: getStrapiReadHeaders() }
   );
 
   if (!kommentareRes.ok) {

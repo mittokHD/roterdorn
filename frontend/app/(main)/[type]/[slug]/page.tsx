@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getRezensionBySlug, getStrapiMediaUrl } from "@/lib/strapi";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { TYPE_SLUG_MAP } from "@/lib/types";
 import { TYPE_META } from "@/lib/constants";
 import { formatDate, readingTime } from "@/lib/utils";
@@ -153,7 +154,7 @@ export default async function RezensionPage({ params }: PageProps) {
         {/* Rich Text Content */}
         <div
           className="prose-custom mb-16"
-          dangerouslySetInnerHTML={{ __html: rezension.content || "" }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(rezension.content || "") }}
         />
 
         {/* Divider */}

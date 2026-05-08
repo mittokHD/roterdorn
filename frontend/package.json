@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "next": "16.2.3",
@@ -22,5 +25,19 @@
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "devDependenciesPending": {
+    "_comment": "Install these when npm registry is available:",
+    "vitest": "^2",
+    "@vitejs/plugin-react": "^4",
+    "@testing-library/react": "^16",
+    "@testing-library/jest-dom": "^6",
+    "jsdom": "^25"
+  },
+  "dependenciesPending": {
+    "_comment": "Install these when npm registry is available:",
+    "zod": "^3",
+    "isomorphic-dompurify": "^2",
+    "jsdom": "^25"
   }
 }
