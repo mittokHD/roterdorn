@@ -4,7 +4,7 @@ import { STRAPI_INTERNAL_URL, STRAPI_WRITE_TOKEN } from "@/lib/config";
 
 export async function POST(request: Request) {
   try {
-    // Auth-Check: JWT aus Cookie lesen und bei Strapi validieren
+
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
 
@@ -31,7 +31,6 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { text, website, rezensionId } = body;
 
-    // Honeypot
     if (website && website.length > 0) {
       return NextResponse.json({ success: true, fake: true }, { status: 201 });
     }

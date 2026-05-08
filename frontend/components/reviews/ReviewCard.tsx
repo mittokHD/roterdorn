@@ -6,11 +6,11 @@ import { getStrapiMediaUrl } from "@/lib/strapi";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
 
-interface RezensionCardProps {
+interface ReviewCardProps {
   rezension: Rezension;
 }
 
-export default function RezensionCard({ rezension }: RezensionCardProps) {
+export default function ReviewCard({ rezension }: ReviewCardProps) {
   const meta = TYPE_META[rezension.type];
   const href = `/${meta.slug}/${rezension.slug}`;
   const coverUrl = getStrapiMediaUrl(rezension.cover?.url);

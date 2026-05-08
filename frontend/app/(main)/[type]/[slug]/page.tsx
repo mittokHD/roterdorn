@@ -8,9 +8,9 @@ import { TYPE_META, formatDate } from "@/lib/constants";
 import { readingTime } from "@/lib/utils";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
-import DetailSection from "@/components/rezension/DetailSection";
+import DetailSection from "@/components/reviews/DetailSection";
 import CommentSection from "@/components/comments/CommentSection";
-import SimilarRezensionen from "@/components/rezension/SimilarRezensionen";
+import SimilarReviews from "@/components/reviews/SimilarReviews";
 
 interface PageProps {
   params: Promise<{ type: string; slug: string }>;
@@ -170,7 +170,7 @@ export default async function RezensionPage({ params }: PageProps) {
         />
 
         {/* Similar Reviews */}
-        <SimilarRezensionen type={rezension.type} currentSlug={rezension.slug} />
+        <SimilarReviews type={rezension.type} currentSlug={rezension.slug} />
 
         {/* Back link */}
         <div className="mt-12">

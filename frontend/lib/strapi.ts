@@ -8,7 +8,6 @@ import type {
 import {
   STRAPI_INTERNAL_URL,
   STRAPI_API_TOKEN,
-  getStrapiBaseUrl,
 } from "./config";
 
 // ─── Strapi Query Builder ────────────────────
@@ -78,6 +77,14 @@ interface FetchOptions {
   revalidate?: number;
 }
 
+/**
+ * Performs a standard fetch request to the Strapi REST API.
+ * 
+ * @param path - The API endpoint path (e.g., '/rezensionen').
+ * @param options - Fetch options including Next.js tags for caching and revalidation.
+ * @returns A promise that resolves to the typed generic response `T`.
+ * @throws An error if the response is not OK (e.g., 404 or 500).
+ */
 async function fetchStrapi<T>(
   path: string,
   options: FetchOptions = {}
@@ -112,6 +119,12 @@ async function fetchStrapi<T>(
 
 // ─── Rezensionen ─────────────────────────────
 
+/**
+ * Retrieves a paginated list of all reviews (Rezensionen).
+ * 
+ * @param params - Optional parameters for pagination and sorting.
+ * @returns A promise that resolves to a Strapi response containing the reviews.
+ */
 export async function getRezensionen(params?: {
   page?: number;
   pageSize?: number;
@@ -129,6 +142,14 @@ export async function getRezensionen(params?: {
   );
 }
 
+/**
+ * Retrieves a paginated list of reviews filtered by a specific type (e.g., 'buch', 'film').
+ * Also allows optional filtering by genre.
+ * 
+ * @param type - The specific type of review to fetch.
+ * @param params - Optional parameters for pagination, sorting, and genre filtering.
+ * @returns A promise that resolves to a Strapi response containing the filtered reviews.
+ */
 export async function getRezensionenByType(
   type: RezensionType,
   params?: { page?: number; pageSize?: number; sort?: string; genre?: string }
@@ -153,6 +174,14 @@ export async function getRezensionenByType(
   );
 }
 
+/**
+ * Retrieves reviews similar to the current one, based on the same type, excluding the current review.
+ * 
+ * @param type - The type of the current review.
+ * @param currentSlug - The slug of the current review (to exclude it from the results).
+ * @param limit - The maximum number of similar reviews to return (defaults to 4).
+ * @returns A promise that resolves to a Strapi response containing similar reviews.
+ */
 export async function getSimilarRezensionen(
   type: RezensionType,
   currentSlug: string,
@@ -174,6 +203,11 @@ export async function getSimilarRezensionen(
   );
 }
 
+/**
+ * Retrieves a list of all available genres.
+ * 
+ * @returns A promise that resolves to an array of genres.
+ */
 export async function getGenres(): Promise<Genre[]> {
   try {
     const data = await fetchStrapi<StrapiResponse<Genre>>(
@@ -186,6 +220,12 @@ export async function getGenres(): Promise<Genre[]> {
   }
 }
 
+/**
+ * Retrieves a single review by its unique slug.
+ * 
+ * @param slug - The unique slug of the review.
+ * @returns A promise that resolves to a Strapi response containing the review.
+ */
 export async function getRezensionBySlug(
   slug: string
 ): Promise<StrapiSingleResponse<Rezension[]>> {
@@ -200,6 +240,13 @@ export async function getRezensionBySlug(
   );
 }
 
+/**
+ * Searches for reviews based on a specific search query matching the title.
+ * 
+ * @param searchQuery - The text query to search for within review titles.
+ * @param params - Optional parameters for pagination.
+ * @returns A promise that resolves to a Strapi response containing the search results.
+ */
 export async function searchRezensionen(
   searchQuery: string,
   params?: { page?: number; pageSize?: number }

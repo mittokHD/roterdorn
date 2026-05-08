@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { Rezension } from "@/lib/types";
-import RezensionCard from "@/components/rezension/RezensionCard";
+import ReviewCard from "@/components/reviews/ReviewCard";
 import EmptyState from "@/components/ui/EmptyState";
 import { SpinnerIcon } from "@/components/ui/Icons";
 
@@ -117,7 +117,7 @@ export default function SuchePage() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">
             {results.map((rezension) => (
-              <RezensionCard key={rezension.id} rezension={rezension} />
+              <ReviewCard key={rezension.id} rezension={rezension} />
             ))}
           </div>
         </>

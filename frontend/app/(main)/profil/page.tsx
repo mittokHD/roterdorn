@@ -26,12 +26,21 @@ export default function ProfilPage() {
 
   useEffect(() => {
     if (!user) return;
-    setLoadingComments(true);
-    fetch("/api/profil/kommentare")
-      .then((r) => r.json())
-      .then((data) => setKommentare(data.kommentare || []))
-      .catch(() => setKommentare([]))
-      .finally(() => setLoadingComments(false));
+
+    const fetchComments = async () => {
+      setLoadingComments(true);
+      try {
+        const r = await fetch("/api/profile/comments");
+        const data = await r.json();
+        setKommentare(data.kommentare || []);
+      } catch {
+        setKommentare([]);
+      } finally {
+        setLoadingComments(false);
+      }
+    };
+
+    fetchComments();
   }, [user]);
 
   if (isLoading) {

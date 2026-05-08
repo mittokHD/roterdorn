@@ -4,9 +4,9 @@ import { getRezensionenByType, getGenres } from "@/lib/strapi";
 import { TYPE_SLUG_MAP, TYPE_LABELS } from "@/lib/types";
 import { TYPE_META } from "@/lib/constants";
 import type { Rezension } from "@/lib/types";
-import RezensionCard from "@/components/rezension/RezensionCard";
+import ReviewCard from "@/components/reviews/ReviewCard";
 import EmptyState from "@/components/ui/EmptyState";
-import FilterBar from "@/components/rezension/FilterBar";
+import FilterBar from "@/components/reviews/FilterBar";
 
 interface PageProps {
   params: Promise<{ type: string }>;
@@ -78,7 +78,7 @@ export default async function TypePage({ params, searchParams }: PageProps) {
       {rezensionen.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">
           {rezensionen.map((rezension) => (
-            <RezensionCard key={rezension.id} rezension={rezension} />
+            <ReviewCard key={rezension.id} rezension={rezension} />
           ))}
         </div>
       ) : (
