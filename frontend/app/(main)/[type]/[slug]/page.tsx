@@ -6,7 +6,7 @@ import { getRezensionBySlug, getStrapiMediaUrl } from "@/lib/strapi";
 import { sanitizeHtml } from "@/lib/sanitize";
 import { TYPE_SLUG_MAP } from "@/lib/types";
 import { TYPE_META } from "@/lib/constants";
-import { formatDate, readingTime } from "@/lib/utils";
+import { formatDate, readingTime, buildReviewJsonLd } from "@/lib/utils";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
 import DetailSection from "@/components/reviews/DetailSection";
@@ -188,29 +188,12 @@ export default async function RezensionPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Review",
-            itemReviewed: {
-              "@type": "CreativeWork",
-              name: rezension.title,
-              image: coverUrl,
-            },
-            reviewRating: rezension.rating ? {
-              "@type": "Rating",
-              ratingValue: rezension.rating,
-              bestRating: "10",
-              worstRating: "1",
-            } : undefined,
-            author: {
-              "@type": "Person",
-              name: rezension.autor?.name || "Roterdorn",
-            },
-            publisher: {
-              "@type": "Organization",
-              name: "Roterdorn",
-            },
-            datePublished: rezension.publishedAt,
+          __html: buildReviewJsonLd({
+            title: rezension.title,
+            coverUrl,
+            rating: rezension.rating,
+            authorName: rezension.autor?.name || "Roterdorn",
+            publishedAt: rezension.publishedAt,
           }),
         }}
       />
