@@ -4,45 +4,41 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useFormSubmit } from "@/hooks/useFormSubmit";
+
+interface LoginData {
+  identifier: string;
+  password: string;
+}
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
-  const [formData, setFormData] = useState({ identifier: "", password: "" });
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<LoginData>({
+    identifier: "",
+    password: "",
+  });
+
+  const { submit, error, isLoading } = useFormSubmit(async (data: LoginData) => {
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || "Anmeldung fehlgeschlagen.");
+    login(json.user);
+    router.push("/");
+    router.refresh();
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Anmeldung fehlgeschlagen.");
-        return;
-      }
-
-      login(data.user);
-      router.push("/");
-      router.refresh();
-    } catch {
-      setError("Ein unerwarteter Fehler ist aufgetreten.");
-    } finally {
-      setIsLoading(false);
-    }
+    submit(formData);
   };
 
   return (

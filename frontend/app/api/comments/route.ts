@@ -1,10 +1,28 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { STRAPI_INTERNAL_URL, STRAPI_WRITE_TOKEN } from "@/lib/config";
+import { cookies, headers } from "next/headers";
+import { STRAPI_INTERNAL_URL } from "@/lib/config";
+import { checkRateLimit } from "@/lib/rateLimit";
+import { parseComment } from "@/lib/schemas";
+import { getStrapiWriteHeaders } from "@/lib/strapi";
 
 export async function POST(request: Request) {
   try {
+    // ── Rate limiting ────────────────────────────────────────────────────
+    const headersList = await headers();
+    const ip =
+      headersList.get("x-forwarded-for")?.split(",")[0].trim() ??
+      headersList.get("x-real-ip") ??
+      "unknown";
 
+    const { allowed, retryAfter } = checkRateLimit(ip);
+    if (!allowed) {
+      return NextResponse.json(
+        { error: `Zu viele Anfragen. Bitte warte ${retryAfter} Sekunden.` },
+        { status: 429, headers: { "Retry-After": String(retryAfter) } }
+      );
+    }
+
+    // ── Auth check ───────────────────────────────────────────────────────
     const cookieStore = await cookies();
     const token = cookieStore.get("auth_token")?.value;
 
@@ -28,46 +46,35 @@ export async function POST(request: Request) {
 
     const strapiUser = await userRes.json();
 
+    // ── Input validation ─────────────────────────────────────────────────
     const body = await request.json();
-    const { text, website, rezensionId } = body;
+    const parsed = parseComment(body);
 
-    if (website && website.length > 0) {
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.errors[0].message },
+        { status: 400 }
+      );
+    }
+
+    const { text, rezensionId, website } = parsed.data;
+
+    // Honeypot: bots fill hidden fields, real users leave them empty.
+    if (website.length > 0) {
       return NextResponse.json({ success: true, fake: true }, { status: 201 });
     }
 
-    if (!text || typeof text !== "string" || text.trim().length < 3) {
-      return NextResponse.json(
-        { error: "Kommentar muss mindestens 3 Zeichen lang sein." },
-        { status: 400 }
-      );
-    }
-
-    if (!rezensionId || typeof rezensionId !== "string") {
-      return NextResponse.json(
-        { error: "Ungültige Rezensions-ID." },
-        { status: 400 }
-      );
-    }
-
+    // ── Strapi write ─────────────────────────────────────────────────────
     const strapiRes = await fetch(`${STRAPI_INTERNAL_URL}/api/kommentare`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(STRAPI_WRITE_TOKEN
-          ? { Authorization: `Bearer ${STRAPI_WRITE_TOKEN}` }
-          : {}),
-      },
+      headers: getStrapiWriteHeaders(),
       body: JSON.stringify({
         data: {
           name: strapiUser.username,
-          text: text.trim(),
+          text,
           isApproved: false,
-          // Link comment to the user by ID for reliable ownership tracking.
-          // The 'name' field is kept as a denormalized display name snapshot.
           user: strapiUser.id,
-          rezension: {
-            connect: [rezensionId],
-          },
+          rezension: { connect: [rezensionId] },
         },
       }),
     });
@@ -82,10 +89,7 @@ export async function POST(request: Request) {
     }
 
     const data = await strapiRes.json();
-    return NextResponse.json(
-      { success: true, data: data.data },
-      { status: 201 }
-    );
+    return NextResponse.json({ success: true, data: data.data }, { status: 201 });
   } catch (error) {
     console.error("Comment proxy error:", error);
     return NextResponse.json(

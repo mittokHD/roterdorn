@@ -29,3 +29,42 @@ export function readingTime(html: string): number {
   const words = text.split(" ").filter(Boolean).length;
   return Math.max(1, Math.ceil(words / 200));
 }
+
+/**
+ * Builds a Schema.org Review JSON-LD object for a Rezension.
+ * Returns a JSON string ready to embed in a <script type="application/ld+json">.
+ */
+export function buildReviewJsonLd(params: {
+  title: string;
+  coverUrl: string;
+  rating: number | null;
+  authorName: string;
+  publishedAt: string;
+}): string {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Review",
+    itemReviewed: {
+      "@type": "CreativeWork",
+      name: params.title,
+      image: params.coverUrl,
+    },
+    reviewRating: params.rating
+      ? {
+          "@type": "Rating",
+          ratingValue: params.rating,
+          bestRating: "10",
+          worstRating: "1",
+        }
+      : undefined,
+    author: {
+      "@type": "Person",
+      name: params.authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Roterdorn",
+    },
+    datePublished: params.publishedAt,
+  });
+}

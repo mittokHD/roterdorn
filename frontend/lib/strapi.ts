@@ -8,7 +8,25 @@ import type {
 import {
   STRAPI_INTERNAL_URL,
   STRAPI_API_TOKEN,
+  STRAPI_WRITE_TOKEN,
 } from "./config";
+
+// ─── Auth Header Helpers ─────────────────────
+// Exported so API routes can import them instead of duplicating the header logic.
+
+/** Headers for read-only Strapi requests (uses the read-only API token). */
+export function getStrapiReadHeaders(): HeadersInit {
+  const h: HeadersInit = { "Content-Type": "application/json" };
+  if (STRAPI_API_TOKEN) h.Authorization = `Bearer ${STRAPI_API_TOKEN}`;
+  return h;
+}
+
+/** Headers for write Strapi requests (uses the write token). */
+export function getStrapiWriteHeaders(): HeadersInit {
+  const h: HeadersInit = { "Content-Type": "application/json" };
+  if (STRAPI_WRITE_TOKEN) h.Authorization = `Bearer ${STRAPI_WRITE_TOKEN}`;
+  return h;
+}
 
 // ─── Strapi Query Builder ────────────────────
 
