@@ -9,6 +9,14 @@ const SORT_OPTIONS = [
   { value: "rating:asc", label: "Schlechteste" },
 ];
 
+/** Shared button styling for active/inactive filter chip states. */
+const chipClass = (isActive: boolean) =>
+  `px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+    isActive
+      ? "bg-brand-500 text-white border-brand-500"
+      : "bg-surface-tertiary text-text-secondary border-border-subtle hover:border-border-hover hover:text-text-primary"
+  }`;
+
 interface FilterBarProps {
   genres: string[];
   currentSort: string;
@@ -38,11 +46,7 @@ export default function FilterBar({ genres, currentSort, currentGenre }: FilterB
           <button
             key={opt.value}
             onClick={() => push(opt.value, currentGenre)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
-              activeSort === opt.value
-                ? "bg-brand-500 text-white border-brand-500"
-                : "bg-surface-tertiary text-text-secondary border-border-subtle hover:border-border-hover hover:text-text-primary"
-            }`}
+            className={chipClass(activeSort === opt.value)}
           >
             {opt.label}
           </button>
@@ -55,11 +59,7 @@ export default function FilterBar({ genres, currentSort, currentGenre }: FilterB
           <span className="text-xs font-medium text-text-muted uppercase tracking-wide mr-1">Genre</span>
           <button
             onClick={() => push(activeSort, "")}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
-              !currentGenre
-                ? "bg-brand-500 text-white border-brand-500"
-                : "bg-surface-tertiary text-text-secondary border-border-subtle hover:border-border-hover hover:text-text-primary"
-            }`}
+            className={chipClass(!currentGenre)}
           >
             Alle
           </button>
@@ -67,11 +67,7 @@ export default function FilterBar({ genres, currentSort, currentGenre }: FilterB
             <button
               key={g}
               onClick={() => push(activeSort, currentGenre === g ? "" : g)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
-                currentGenre === g
-                  ? "bg-brand-500 text-white border-brand-500"
-                  : "bg-surface-tertiary text-text-secondary border-border-subtle hover:border-border-hover hover:text-text-primary"
-              }`}
+              className={chipClass(currentGenre === g)}
             >
               {g}
             </button>

@@ -62,6 +62,9 @@ export async function POST(request: Request) {
           name: strapiUser.username,
           text: text.trim(),
           isApproved: false,
+          // Link comment to the user by ID for reliable ownership tracking.
+          // The 'name' field is kept as a denormalized display name snapshot.
+          user: strapiUser.id,
           rezension: {
             connect: [rezensionId],
           },

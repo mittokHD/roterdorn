@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 interface SubmitCommentPayload {
-  name: string;
   text: string;
   website: string;
   rezensionId: string;

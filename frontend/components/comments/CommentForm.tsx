@@ -23,7 +23,6 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
     if (!text.trim() || !user) return;
 
     await submitComment({
-      name: user.username,
       text: text.trim(),
       website: "",
       rezensionId,
@@ -34,19 +33,19 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-4 text-[color:var(--text-primary)]">
+      <h3 className="text-lg font-semibold mb-4 text-text-primary">
         Kommentar schreiben
       </h3>
 
       {isSuccess ? (
-        <div className="rounded-xl p-5 text-center bg-[#22c55e1a] border border-[#22c55e4d] text-green-500">
+        <div className="rounded-xl p-5 text-center bg-green-500/10 border border-green-500/30 text-green-500">
           <p className="text-sm font-medium mb-1">Kommentar eingereicht!</p>
-          <p className="text-xs text-[color:var(--text-muted)]">
+          <p className="text-xs text-text-muted">
             Dein Kommentar wird nach Freigabe angezeigt.
           </p>
           <button
             onClick={handleReset}
-            className="mt-3 text-xs underline text-[color:var(--text-accent)] hover:opacity-80 transition-opacity"
+            className="mt-3 text-xs underline text-text-accent hover:opacity-80 transition-opacity"
           >
             Noch einen Kommentar schreiben
           </button>
@@ -69,7 +68,7 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
               placeholder="Dein Kommentar..."
               required
               rows={4}
-              className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-[color:var(--brand-500)] resize-y bg-[color:var(--bg-tertiary)] text-[color:var(--text-primary)] border border-[color:var(--border-default)]"
+              className="w-full rounded-xl px-4 py-2.5 text-sm outline-none transition-all duration-300 focus:ring-2 focus:ring-brand-500 resize-y bg-surface-tertiary text-text-primary border border-border-default"
             />
           </div>
 
@@ -82,13 +81,13 @@ export default function CommentForm({ rezensionId }: CommentFormProps) {
           <button
             type="submit"
             disabled={isLoading || !text.trim()}
-            className="px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 bg-[color:var(--brand-500)] text-white shadow-[0_0_15px_var(--brand-500)]"
+            className="px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 bg-brand-500 text-white shadow-[0_0_15px_var(--shadow-brand)]"
             id="comment-submit"
           >
             {isLoading ? "Wird gesendet..." : "Kommentar abschicken"}
           </button>
 
-          <p className="text-xs text-[color:var(--text-muted)]">
+          <p className="text-xs text-text-muted">
             Kommentare werden vor der Veröffentlichung geprüft.
           </p>
         </form>

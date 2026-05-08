@@ -64,6 +64,11 @@ export interface Kommentar {
   text: string;
   isApproved: boolean;
   createdAt: string;
+  /** The Strapi user who authored this comment. Optional for backwards compatibility with legacy comments. */
+  user?: {
+    id: number;
+    username: string;
+  } | null;
 }
 
 // ─── Dynamic Zone Components ─────────────────

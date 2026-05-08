@@ -15,17 +15,6 @@ export const STRAPI_INTERNAL_URL =
 export const STRAPI_PUBLIC_URL =
   process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 
-/**
- * Resolve the correct Strapi base URL depending on execution context.
- * - Server-side (SSR/API routes): Use internal Docker hostname.
- * - Client-side (browser): Use public URL.
- */
-export function getStrapiBaseUrl(): string {
-  if (typeof window !== "undefined") {
-    return STRAPI_PUBLIC_URL;
-  }
-  return STRAPI_INTERNAL_URL;
-}
 
 /**
  * Read-only API token for fetching published content from Strapi.

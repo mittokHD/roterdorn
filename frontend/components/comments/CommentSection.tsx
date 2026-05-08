@@ -1,5 +1,5 @@
 import type { Kommentar } from "@/lib/types";
-import { formatDateShort } from "@/lib/constants";
+import { formatDateShort } from "@/lib/utils";
 import CommentGate from "./CommentGate";
 
 interface CommentSectionProps {

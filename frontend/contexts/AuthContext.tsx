@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 
-interface AuthUser {
+/** Represents the authenticated user's public data stored in React context. */
+export interface AuthUser {
   id: number;
   username: string;
   email: string;
@@ -11,14 +12,16 @@ interface AuthUser {
 interface AuthContextType {
   user: AuthUser | null;
   isLoading: boolean;
-  setUser: (user: AuthUser | null) => void;
+  /** Set the authenticated user after a successful login or registration. */
+  login: (user: AuthUser) => void;
+  /** Clear the session cookie and reset the local auth state. */
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
-  setUser: () => {},
+  login: () => {},
   logout: async () => {},
 });
 
@@ -34,13 +37,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setIsLoading(false));
   }, []);
 
+  const login = useCallback((authUser: AuthUser) => {
+    setUser(authUser);
+  }, []);
+
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, setUser, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -49,3 +56,4 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   return useContext(AuthContext);
 }
+

@@ -75,22 +75,3 @@ export const NAV_ITEMS = ALL_TYPES.map((t) => ({
   label: TYPE_META[t].labelPlural,
   icon: TYPE_META[t].icon,
 }));
-
-// ─── Formatting Helpers ──────────────────────
-
-/**
- * Format an ISO date string for German locale display.
- */
-export function formatDate(
-  isoDate: string,
-  options: Intl.DateTimeFormatOptions = { day: "numeric", month: "long", year: "numeric" }
-): string {
-  return new Date(isoDate).toLocaleDateString("de-DE", options);
-}
-
-/**
- * Format a short date (e.g. "3. Apr. 2026").
- */
-export function formatDateShort(isoDate: string): string {
-  return formatDate(isoDate, { day: "numeric", month: "short", year: "numeric" });
-}

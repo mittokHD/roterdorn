@@ -1,5 +1,7 @@
 import type { Core } from '@strapi/strapi';
 
-const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => ({});
+// No plugins require custom configuration at this time.
+// Add plugin config here when needed (e.g. email provider, i18n locale).
+const config: Core.Config.Plugin = {};
 
 export default config;

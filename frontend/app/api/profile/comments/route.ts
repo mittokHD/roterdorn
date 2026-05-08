@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
   }
 
-  // Get username from Strapi
+  // Validate session and retrieve user identity from Strapi
   const userRes = await fetch(`${STRAPI_INTERNAL_URL}/api/users/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -21,9 +21,10 @@ export async function GET() {
 
   const strapiUser = await userRes.json();
 
-  // Fetch this user's comments by name
+  // Filter comments by user ID (immutable) instead of username (mutable).
+  // This prevents comments from "disappearing" if the user ever changes their name.
   const query = new URLSearchParams({
-    "filters[name][$eq]": strapiUser.username,
+    "filters[user][id][$eq]": String(strapiUser.id),
     "populate[rezension][fields][0]": "title",
     "populate[rezension][fields][1]": "slug",
     "populate[rezension][fields][2]": "type",
@@ -31,13 +32,13 @@ export async function GET() {
     "pagination[pageSize]": "50",
   });
 
+  const headers: HeadersInit = STRAPI_API_TOKEN
+    ? { Authorization: `Bearer ${STRAPI_API_TOKEN}` }
+    : {};
+
   const kommentareRes = await fetch(
     `${STRAPI_INTERNAL_URL}/api/kommentare?${query}`,
-    {
-      headers: {
-        ...(STRAPI_API_TOKEN ? { Authorization: `Bearer ${STRAPI_API_TOKEN}` } : {}),
-      },
-    }
+    { headers }
   );
 
   if (!kommentareRes.ok) {
@@ -47,3 +48,4 @@ export async function GET() {
   const data = await kommentareRes.json();
   return NextResponse.json({ kommentare: data.data || [] });
 }
+

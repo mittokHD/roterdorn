@@ -29,6 +29,12 @@
       "relation": "manyToOne",
       "target": "api::rezension.rezension",
       "inversedBy": "kommentare"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user"
     }
   }
 }
+

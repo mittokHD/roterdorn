@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { setUser } = useAuth();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -55,7 +55,7 @@ export default function RegisterPage() {
         return;
       }
 
-      setUser(data.user);
+      login(data.user);
       router.push("/");
       router.refresh();
     } catch {

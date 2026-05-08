@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setUser } = useAuth();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({ identifier: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +35,7 @@ export default function LoginPage() {
         return;
       }
 
-      setUser(data.user);
+      login(data.user);
       router.push("/");
       router.refresh();
     } catch {
