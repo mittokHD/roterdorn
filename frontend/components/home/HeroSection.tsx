@@ -24,7 +24,7 @@ export default function HeroSection() {
           </h1>
 
           <p className="text-lg sm:text-xl max-w-2xl mx-auto mb-10 text-text-secondary">
-            Ehrliche Rezensionen zu Büchern, Filmen, Musik, Spielen und Events
+            Ehrliche Rezensionen zu Büchern, Filmen, Musik und Spielen
             — geschrieben mit Leidenschaft und einem kritischen Auge.
           </p>
 

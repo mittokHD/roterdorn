@@ -52,13 +52,14 @@ export default function Header() {
             <Image
               src="/logo.png"
               alt="Roterdorn Logo"
-              width={40}
-              height={40}
-              className="rounded-xl object-contain drop-shadow-md mr-1"
+              width={48}
+              height={48}
+              className="rounded-xl object-contain drop-shadow-md"
             />
-            <span className="text-2xl font-black tracking-tight text-brand-500">roter</span>
-            <span className="text-2xl font-black tracking-tight text-text-primary">dorn</span>
-            <span className="ml-1 inline-block h-2 w-2 rounded-full transition-all duration-300 group-hover:scale-125 bg-brand-500 shadow-brand" />
+            <span className="text-2xl font-black tracking-tight" aria-label="roterdorn">
+              <span className="text-brand-500">roter</span>
+              <span className="text-text-primary">dorn</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -69,6 +70,7 @@ export default function Header() {
                 href={item.href}
                 icon={item.icon}
                 label={item.label}
+                subcategories={item.subcategories}
                 isActive={pathname.startsWith(item.href)}
                 variant="desktop"
               />

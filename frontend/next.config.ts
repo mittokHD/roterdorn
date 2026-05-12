@@ -43,6 +43,21 @@ const nextConfig: NextConfig = {
         destination: adminUrl,
         permanent: false,
       },
+      {
+        source: "/impressum/datenschutz",
+        destination: "/datenschutz",
+        permanent: true,
+      },
+      {
+        source: "/impressung",
+        destination: "/impressum",
+        permanent: true,
+      },
+      {
+        source: "/impressung/datenschutz",
+        destination: "/datenschutz",
+        permanent: true,
+      },
     ];
   },
 };

@@ -13,6 +13,14 @@ export default function SuchePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
+  useEffect(() => {
+    const initialQuery = new URLSearchParams(window.location.search).get("q");
+    if (initialQuery) {
+      setQuery(initialQuery);
+      setDebouncedQuery(initialQuery);
+    }
+  }, []);
+
   // Debounce user input
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -30,6 +30,7 @@ export default function MobileMenu({ pathname, user, isLoading, onClose, onLogou
             href={item.href}
             icon={item.icon}
             label={item.label}
+            subcategories={item.subcategories}
             isActive={pathname.startsWith(item.href)}
             variant="mobile"
             onClick={onClose}

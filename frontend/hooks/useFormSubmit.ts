@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 type Status = "idle" | "loading" | "success" | "error";
 
@@ -36,7 +36,9 @@ export function useFormSubmit<T>(
   // Ref pattern keeps `submit` stable across renders without listing `action`
   // as a dependency — avoids re-creating the callback on every render cycle.
   const actionRef = useRef(action);
-  actionRef.current = action;
+  useEffect(() => {
+    actionRef.current = action;
+  }, [action]);
 
   const submit = useCallback(async (data: T) => {
     setStatus("loading");

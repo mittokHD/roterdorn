@@ -1,14 +1,13 @@
 import { MetadataRoute } from "next";
 import { getRezensionen } from "@/lib/strapi";
-import { TYPE_META, ALL_TYPES } from "@/lib/constants";
+import { CATEGORY_TYPES, TYPE_META } from "@/lib/constants";
 import { SITE_URL } from "@/lib/config";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Derive category pages from the central type registry so new types
-  // are automatically included without touching this file.
-  const categoryRoutes = ALL_TYPES.map((t) => `/${TYPE_META[t].slug}`);
+  // Derive the public category pages from the central visible category list.
+  const categoryRoutes = CATEGORY_TYPES.map((t) => `/${TYPE_META[t].slug}`);
 
-  const staticRoutes = ["", "/suche", ...categoryRoutes].map((route) => ({
+  const staticRoutes = ["", "/suche", "/ueber-uns", "/impressum", "/datenschutz", ...categoryRoutes].map((route) => ({
     url: `${SITE_URL}${route}`,
     lastModified: new Date(),
     changeFrequency: "daily" as const,

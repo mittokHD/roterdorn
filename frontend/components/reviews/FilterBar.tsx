@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 
 const SORT_OPTIONS = [
@@ -19,11 +20,19 @@ const chipClass = (isActive: boolean) =>
 
 interface FilterBarProps {
   genres: string[];
+  genreLinks?: { label: string; href: string }[];
+  genreLabel?: string;
   currentSort: string;
   currentGenre: string;
 }
 
-export default function FilterBar({ genres, currentSort, currentGenre }: FilterBarProps) {
+export default function FilterBar({
+  genres,
+  genreLinks,
+  genreLabel = "Genre",
+  currentSort,
+  currentGenre,
+}: FilterBarProps) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -56,22 +65,37 @@ export default function FilterBar({ genres, currentSort, currentGenre }: FilterB
       {/* Genre row */}
       {genres.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-text-muted uppercase tracking-wide mr-1">Genre</span>
-          <button
-            onClick={() => push(activeSort, "")}
-            className={chipClass(!currentGenre)}
-          >
-            Alle
-          </button>
-          {genres.map((g) => (
-            <button
-              key={g}
-              onClick={() => push(activeSort, currentGenre === g ? "" : g)}
-              className={chipClass(currentGenre === g)}
-            >
-              {g}
-            </button>
-          ))}
+          <span className="text-xs font-medium text-text-muted uppercase tracking-wide mr-1">{genreLabel}</span>
+          {genreLinks ? (
+            <>
+              <Link href={pathname} className={chipClass(!currentGenre)}>
+                Alle
+              </Link>
+              {genreLinks.map((link) => (
+                <Link key={link.href} href={link.href} className={chipClass(false)}>
+                  {link.label}
+                </Link>
+              ))}
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => push(activeSort, "")}
+                className={chipClass(!currentGenre)}
+              >
+                Alle
+              </button>
+              {genres.map((g) => (
+                <button
+                  key={g}
+                  onClick={() => push(activeSort, currentGenre === g ? "" : g)}
+                  className={chipClass(currentGenre === g)}
+                >
+                  {g}
+                </button>
+              ))}
+            </>
+          )}
         </div>
       )}
     </div>

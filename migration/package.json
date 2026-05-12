@@ -5,7 +5,9 @@
   "main": "migrate.js",
   "type": "module",
   "scripts": {
-    "start": "node migrate.js"
+    "start": "node migrate.js",
+    "import:covers": "node import-covers.js",
+    "export:music-taxonomies": "node generate-music-taxonomy-data.js"
   },
   "dependencies": {
     "mysql2": "^3.9.0",
