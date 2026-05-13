@@ -71,11 +71,21 @@ async function main() {
 
         const meta = Object.fromEntries(metaData.map((m) => [m.meta_key, m.meta_value]));
 
+        const [categoryRows] = await connection.execute(`
+          SELECT t.term_id
+          FROM wp_term_relationships tr
+          JOIN wp_term_taxonomy tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+          JOIN wp_terms t ON t.term_id = tt.term_id
+          WHERE tr.object_id = ?
+            AND tt.taxonomy = 'category'
+        `, [post.ID]);
+        const categoryIds = categoryRows.map((row) => Number(row.term_id));
+
         // HTML -> Markdown
         const contentMarkdown = turndownService.turndown(post.post_content || '');
 
         // Typ-Mapping
-        let strapiType = mapPostType(post.post_type, meta);
+        let strapiType = mapPostType(post.post_type, meta, categoryIds);
 
         const generatedSlug = generateSlug(post.post_title);
 
@@ -97,14 +107,13 @@ async function main() {
 
         // Rating-Logik
         const parsedRating = meta.rating ? parseFloat(meta.rating) : null;
-        const fallbackRating = parseFloat((Math.random() * 5 + 4.5).toFixed(1));
 
         const payload = {
           data: {
             title: post.post_title,
             slug: generatedSlug,
             content: contentMarkdown,
-            rating: parsedRating || fallbackRating,
+            rating: Number.isFinite(parsedRating) ? parsedRating : null,
             type: strapiType,
             publishedAt: new Date(post.post_date).toISOString(),
             details: buildDetailsZone(strapiType, meta),
@@ -178,11 +187,16 @@ function generateSlug(text) {
     .replace(/-+$/, '');
 }
 
-function mapPostType(wpType, meta) {
+function mapPostType(wpType, meta, categoryIds = []) {
+  const eventCategoryIds = new Set([5, 1387, 2426, 3373]);
+  if (categoryIds.some((categoryId) => eventCategoryIds.has(categoryId))) {
+    return 'Event';
+  }
+
   const types = { buch: 'Buch', film: 'Film', musik: 'Musik', spiel: 'Spiel', event: 'Event' };
   if (types[wpType]) return types[wpType];
 
-  const categoryMap = { 35: 'Film', 3: 'Musik', 37: 'Spiel', 5: 'Event' };
+  const categoryMap = { 35: 'Film', 3: 'Musik', 37: 'Spiel', 5: 'Event', 1387: 'Event', 2426: 'Event', 3373: 'Event' };
   return categoryMap[meta._yoast_wpseo_primary_category] || 'Buch';
 }
 

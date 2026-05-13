@@ -30,7 +30,7 @@ export interface Rezension {
   title: string;
   slug: string;
   content: string;
-  rating: number;
+  rating: number | null;
   type: RezensionType;
   cover: StrapiMedia | null;
   autor: Autor | null;

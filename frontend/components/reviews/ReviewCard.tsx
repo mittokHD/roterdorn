@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Rezension } from "@/lib/types";
 import { TYPE_META } from "@/lib/constants";
 import { getStrapiMediaUrl } from "@/lib/strapi";
+import { LEGACY_REVIEW_DETAILS } from "@/lib/legacy-review-details.generated";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
 
@@ -10,10 +11,18 @@ interface ReviewCardProps {
   rezension: Rezension;
 }
 
+interface CardTag {
+  label: string;
+  title?: string;
+}
+
+const MUSIC_DETAIL_TAG_ORDER = ["Label", "Genre", "Musiker"];
+
 export default function ReviewCard({ rezension }: ReviewCardProps) {
   const meta = TYPE_META[rezension.type];
   const href = `/${meta.slug}/${rezension.slug}`;
   const coverUrl = getStrapiMediaUrl(rezension.cover?.url);
+  const tags = getCardTags(rezension);
 
   return (
     <Link href={href} className="group block" id={`rezension-${rezension.slug}`}>
@@ -37,9 +46,11 @@ export default function ReviewCard({ rezension }: ReviewCardProps) {
           )}
 
           {/* Rating overlay */}
-          <div className="absolute top-3 right-3">
-            <RatingBadge rating={rezension.rating} size="md" />
-          </div>
+          {rezension.rating != null && (
+            <div className="absolute top-3 right-3">
+              <RatingBadge rating={rezension.rating} size="md" />
+            </div>
+          )}
 
           {/* Gradient overlay at bottom */}
           <div
@@ -68,14 +79,15 @@ export default function ReviewCard({ rezension }: ReviewCardProps) {
           )}
 
           {/* Genres */}
-          {rezension.genres && rezension.genres.length > 0 && (
+          {tags.length > 0 && (
             <div className="mt-auto flex flex-wrap gap-1.5 pt-3">
-              {rezension.genres.slice(0, 3).map((genre) => (
+              {tags.map((tag) => (
                 <span
-                  key={genre.id}
+                  key={`${rezension.slug}-${tag.title || tag.label}`}
+                  title={tag.title}
                   className="text-xs px-2 py-0.5 rounded-full bg-surface-tertiary text-text-muted border border-border-subtle"
                 >
-                  {genre.name}
+                  {tag.label}
                 </span>
               ))}
             </div>
@@ -84,4 +96,39 @@ export default function ReviewCard({ rezension }: ReviewCardProps) {
       </article>
     </Link>
   );
+}
+
+function getCardTags(rezension: Rezension): CardTag[] {
+  if (rezension.type !== "Musik") {
+    return (rezension.genres || []).slice(0, 3).map((genre) => ({
+      label: genre.name,
+      title: genre.name,
+    }));
+  }
+
+  const legacyDetails = LEGACY_REVIEW_DETAILS[rezension.slug];
+  const tags = MUSIC_DETAIL_TAG_ORDER.flatMap((detailLabel) => {
+    const row = legacyDetails?.rows.find((detailRow) => detailRow.label === detailLabel);
+    return (row?.values || []).map((value) => ({
+      label: value.label,
+      title: `${detailLabel}: ${value.label}`,
+    }));
+  });
+
+  if (tags.length > 0) return dedupeTags(tags);
+
+  return (rezension.genres || []).map((genre) => ({
+    label: genre.name,
+    title: genre.name,
+  }));
+}
+
+function dedupeTags(tags: CardTag[]) {
+  const seen = new Set<string>();
+  return tags.filter((tag) => {
+    const key = `${tag.title || ""}:${tag.label}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }

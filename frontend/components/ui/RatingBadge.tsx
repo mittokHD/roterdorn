@@ -1,5 +1,5 @@
 interface RatingBadgeProps {
-  rating: number;
+  rating: number | null | undefined;
   size?: "sm" | "md" | "lg";
 }
 

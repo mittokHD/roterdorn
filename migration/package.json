@@ -7,7 +7,10 @@
   "scripts": {
     "start": "node migrate.js",
     "import:covers": "node import-covers.js",
-    "export:music-taxonomies": "node generate-music-taxonomy-data.js"
+    "export:music-taxonomies": "node generate-music-taxonomy-data.js",
+    "export:legacy-details": "node generate-legacy-review-details.js",
+    "sql:review-content": "node generate-review-content-sql.js",
+    "sql:event-genres": "node generate-event-genre-sql.js"
   },
   "dependencies": {
     "mysql2": "^3.9.0",

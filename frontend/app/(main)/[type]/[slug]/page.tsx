@@ -1,11 +1,12 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getRezensionBySlug, getStrapiMediaUrl } from "@/lib/strapi";
-import { sanitizeHtml } from "@/lib/sanitize";
+import { renderReviewHtml } from "@/lib/review-html";
 import { TYPE_SLUG_MAP } from "@/lib/types";
 import { TYPE_META } from "@/lib/constants";
+import { LEGACY_REVIEW_DETAILS } from "@/lib/legacy-review-details.generated";
 import { formatDate, readingTime, buildReviewJsonLd } from "@/lib/utils";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
@@ -25,12 +26,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const rezension = response.data?.[0];
     if (!rezension) return {};
 
+    const ratingText = rezension.rating != null ? ` — Bewertung: ${rezension.rating}/10` : "";
+
     return {
       title: rezension.title,
-      description: `Rezension: ${rezension.title} — Bewertung: ${rezension.rating}/10`,
+      description: `Rezension: ${rezension.title}${ratingText}`,
       openGraph: {
         title: rezension.title,
-        description: `Rezension: ${rezension.title} — Bewertung: ${rezension.rating}/10`,
+        description: `Rezension: ${rezension.title}${ratingText}`,
         images: rezension.cover
           ? [{ url: getStrapiMediaUrl(rezension.cover.url) }]
           : [],
@@ -57,8 +60,15 @@ export default async function RezensionPage({ params }: PageProps) {
 
   if (!rezension) notFound();
 
+  const expectedTypeSlug = TYPE_META[rezension.type].slug;
+  if (type !== expectedTypeSlug) {
+    redirect(`/${expectedTypeSlug}/${slug}`);
+  }
+
   const coverUrl = getStrapiMediaUrl(rezension.cover?.url);
-  const publishDate = formatDate(rezension.publishedAt);
+  const legacyDetails = LEGACY_REVIEW_DETAILS[rezension.slug];
+  const publishDate = formatDate(legacyDetails?.publishedAt || rezension.publishedAt);
+  const editorName = rezension.autor?.name || legacyDetails?.editor;
   const meta = TYPE_META[rezension.type];
 
   return (
@@ -89,11 +99,16 @@ export default async function RezensionPage({ params }: PageProps) {
         {/* Meta bar */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <TypeBadge type={rezension.type} />
-          <RatingBadge rating={rezension.rating} size="lg" />
+          {rezension.rating != null && <RatingBadge rating={rezension.rating} size="lg" />}
           <span className="text-sm text-text-muted">{publishDate}</span>
           {rezension.content && (
             <span className="text-sm text-text-muted">
               · {readingTime(rezension.content)} Min. Lesezeit
+            </span>
+          )}
+          {editorName && (
+            <span className="text-sm text-text-muted">
+              · Redakteur: {editorName}
             </span>
           )}
         </div>
@@ -145,16 +160,22 @@ export default async function RezensionPage({ params }: PageProps) {
         )}
 
         {/* Details (Dynamic Zone) */}
-        {rezension.details && rezension.details.length > 0 && (
+        {((rezension.details && rezension.details.length > 0) || legacyDetails?.rows.length) && (
           <div className="mb-10">
-            <DetailSection details={rezension.details} />
+            <DetailSection
+              details={rezension.details || []}
+              type={rezension.type}
+              legacyDetails={legacyDetails}
+              coverUrl={rezension.cover ? coverUrl : undefined}
+              coverAlt={rezension.cover?.alternativeText || rezension.title}
+            />
           </div>
         )}
 
         {/* Rich Text Content */}
         <div
           className="prose-custom mb-16"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(rezension.content || "") }}
+          dangerouslySetInnerHTML={{ __html: renderReviewHtml(rezension.content || "") }}
         />
 
         {/* Divider */}
@@ -192,8 +213,8 @@ export default async function RezensionPage({ params }: PageProps) {
             title: rezension.title,
             coverUrl,
             rating: rezension.rating,
-            authorName: rezension.autor?.name || "Roterdorn",
-            publishedAt: rezension.publishedAt,
+            authorName: editorName || "Roterdorn",
+            publishedAt: legacyDetails?.publishedAt || rezension.publishedAt,
           }),
         }}
       />

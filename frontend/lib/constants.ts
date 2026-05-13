@@ -82,7 +82,7 @@ export const TYPE_META: Record<RezensionType, TypeMeta> = {
 export const ALL_TYPES: RezensionType[] = ["Buch", "Film", "Musik", "Spiel", "Event"];
 
 /** Review categories shown in the public navigation and category grid. */
-export const CATEGORY_TYPES: RezensionType[] = ["Buch", "Film", "Musik", "Spiel"];
+export const CATEGORY_TYPES: RezensionType[] = ["Buch", "Film", "Musik", "Spiel", "Event"];
 
 export const TYPE_SUBCATEGORIES: Partial<Record<RezensionType, string[]>> = {
   Buch: [
@@ -96,6 +96,7 @@ export const TYPE_SUBCATEGORIES: Partial<Record<RezensionType, string[]>> = {
   Film: ["Spielfilm", "Serie"],
   Musik: ["Label", "Musikgenre", "Musiker"],
   Spiel: ["Brettspiel", "Kartenspiel", "PC / Konsole", "Rollenspiel", "Tabletop", "Würfelspiel"],
+  Event: ["Veranstaltungen", "Konzert", "Lesung", "Theater"],
 };
 
 const subcategoryHref = (type: RezensionType, label: string) =>
@@ -114,7 +115,7 @@ export const CATEGORY_NAV_ITEMS: NavItem[] = CATEGORY_TYPES.map((t) => ({
   })) || [],
 }));
 
-/** Primary header navigation. Events are intentionally replaced by the static team page. */
+/** Primary header navigation. */
 export const NAV_ITEMS: NavItem[] = [
   ...CATEGORY_NAV_ITEMS,
   {

@@ -4,7 +4,26 @@ interface StaticContentPageProps {
   contentHtml: string;
 }
 
+const SOCIAL_LABELS: Record<string, string> = {
+  facebook: "Facebook",
+  instagram: "Instagram",
+  twitter: "Twitter",
+  googleplus: "Google+",
+  web: "Website",
+};
+
+function enhanceSocialLinks(html: string) {
+  return Object.entries(SOCIAL_LABELS).reduce((content, [className, label]) => (
+    content.replaceAll(
+      `class="${className}"`,
+      `class="${className}" aria-label="${label}" title="${label}"`,
+    )
+  ), html);
+}
+
 export default function StaticContentPage({ title, intro, contentHtml }: StaticContentPageProps) {
+  const enhancedContentHtml = enhanceSocialLinks(contentHtml);
+
   return (
     <main className="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
       <header className="mb-8">
@@ -17,7 +36,7 @@ export default function StaticContentPage({ title, intro, contentHtml }: StaticC
 
       <article
         className="prose-custom static-page-content glass-card p-6 sm:p-8"
-        dangerouslySetInnerHTML={{ __html: contentHtml }}
+        dangerouslySetInnerHTML={{ __html: enhancedContentHtml }}
       />
     </main>
   );

@@ -6,8 +6,6 @@ import { useRouter, usePathname } from "next/navigation";
 const SORT_OPTIONS = [
   { value: "publishedAt:desc", label: "Neueste" },
   { value: "publishedAt:asc", label: "Älteste" },
-  { value: "rating:desc", label: "Beste Bewertung" },
-  { value: "rating:asc", label: "Schlechteste" },
 ];
 
 /** Shared button styling for active/inactive filter chip states. */
