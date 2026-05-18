@@ -34,7 +34,7 @@ const nextConfig: NextConfig = {
     const adminUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337"}/admin/auth/login`;
     return [
       {
-        source: "/admin",
+        source: "/strapi-admin",
         destination: adminUrl,
         permanent: false,
       },
@@ -42,6 +42,81 @@ const nextConfig: NextConfig = {
         source: "/wp-admin",
         destination: adminUrl,
         permanent: false,
+      },
+      {
+        source: "/events",
+        destination: "/event",
+        permanent: true,
+      },
+      {
+        source: "/veranstaltung",
+        destination: "/event?genre=Veranstaltungen",
+        permanent: true,
+      },
+      {
+        source: "/veranstaltung/:slug*",
+        destination: "/event/:slug*",
+        permanent: true,
+      },
+      {
+        source: "/veranstaltungen",
+        destination: "/event?genre=Veranstaltungen",
+        permanent: true,
+      },
+      {
+        source: "/veranstaltungen/:slug*",
+        destination: "/event/:slug*",
+        permanent: true,
+      },
+      {
+        source: "/konzert",
+        destination: "/event?genre=Konzert",
+        permanent: true,
+      },
+      {
+        source: "/konzert/:slug*",
+        destination: "/event/:slug*",
+        permanent: true,
+      },
+      {
+        source: "/lesung",
+        destination: "/event?genre=Lesung",
+        permanent: true,
+      },
+      {
+        source: "/lesung/:slug*",
+        destination: "/event/:slug*",
+        permanent: true,
+      },
+      {
+        source: "/theater",
+        destination: "/event?genre=Theater",
+        permanent: true,
+      },
+      {
+        source: "/theater/:slug*",
+        destination: "/event/:slug*",
+        permanent: true,
+      },
+      {
+        source: "/news",
+        destination: "/neuigkeiten",
+        permanent: true,
+      },
+      {
+        source: "/category/news",
+        destination: "/neuigkeiten",
+        permanent: true,
+      },
+      {
+        source: "/category/artikel",
+        destination: "/artikel",
+        permanent: true,
+      },
+      {
+        source: "/category/interview",
+        destination: "/interview",
+        permanent: true,
       },
       {
         source: "/impressum/datenschutz",

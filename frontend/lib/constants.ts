@@ -115,9 +115,32 @@ export const CATEGORY_NAV_ITEMS: NavItem[] = CATEGORY_TYPES.map((t) => ({
   })) || [],
 }));
 
+/** Editorial sections from the legacy mini database. */
+export const EDITORIAL_NAV_ITEMS: NavItem[] = [
+  {
+    href: "/neuigkeiten",
+    label: "Neuigkeiten",
+    icon: "📰",
+    subcategories: [],
+  },
+  {
+    href: "/artikel",
+    label: "Artikel",
+    icon: "✍️",
+    subcategories: [],
+  },
+  {
+    href: "/interview",
+    label: "Interviews",
+    icon: "🎙️",
+    subcategories: [],
+  },
+];
+
 /** Primary header navigation. */
 export const NAV_ITEMS: NavItem[] = [
   ...CATEGORY_NAV_ITEMS,
+  ...EDITORIAL_NAV_ITEMS,
   {
     href: "/ueber-uns",
     label: "Über uns",

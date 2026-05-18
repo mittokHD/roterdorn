@@ -1,6 +1,7 @@
 import type {
   Rezension,
   Genre,
+  LatestKommentar,
   StrapiResponse,
   StrapiSingleResponse,
   RezensionType,
@@ -211,7 +212,7 @@ export async function getSimilarRezensionen(
       type: { $eq: type },
       slug: { $ne: currentSlug },
     },
-    sort: "rating:desc",
+    sort: "publishedAt:desc",
     pagination: { page: 1, pageSize: limit },
   });
 
@@ -280,6 +281,29 @@ export async function searchRezensionen(
     `/rezensionen?${query}`,
     { tags: ["rezensionen"] }
   );
+}
+
+/**
+ * Retrieves the latest approved comments with their linked review.
+ */
+export async function getLatestApprovedComments(limit = 5): Promise<LatestKommentar[]> {
+  try {
+    const query = [
+      "filters[isApproved][$eq]=true",
+      "sort=createdAt:desc",
+      "populate[rezension]=true",
+      `pagination[pageSize]=${limit}`,
+    ].join("&");
+
+    const data = await fetchStrapi<StrapiResponse<LatestKommentar>>(
+      `/kommentare?${query}`,
+      { tags: ["kommentare"] },
+    );
+
+    return data.data || [];
+  } catch {
+    return [];
+  }
 }
 
 // ─── Helpers ─────────────────────────────────

@@ -10,6 +10,7 @@ import {
 import { getRezensionBySlug, getStrapiMediaUrl } from "@/lib/strapi";
 import type { Rezension } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import { SITE_URL } from "@/lib/config";
 
 interface LegacyTaxonomyPageProps {
   taxonomy: string;
@@ -32,6 +33,9 @@ export function generateLegacyTaxonomyMetadata(
   return {
     title: `${entry.name} — ${entry.taxonomyLabel}`,
     description: `${entry.reviews.length} Rezensionen zu ${entry.name} auf roterdorn.`,
+    alternates: {
+      canonical: `${SITE_URL}${entry.href}`,
+    },
   };
 }
 

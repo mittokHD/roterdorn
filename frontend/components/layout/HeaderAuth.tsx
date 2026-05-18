@@ -28,6 +28,14 @@ export default function HeaderAuth({ user, isLoading, onLogout }: HeaderAuthProp
         >
           {user.username}
         </Link>
+        {user.isAdmin && (
+          <Link
+            href="/admin/beitraege"
+            className="text-sm font-medium text-text-accent hover:text-brand-400 transition-colors"
+          >
+            Admin
+          </Link>
+        )}
         <button
           onClick={onLogout}
           className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-all duration-200 border border-border-subtle bg-surface-tertiary text-text-secondary hover:border-border-hover hover:text-text-primary"

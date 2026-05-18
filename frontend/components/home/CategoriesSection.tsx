@@ -9,8 +9,8 @@ import { CATEGORY_TYPES, TYPE_META, TYPE_SUBCATEGORIES } from "@/lib/constants";
  */
 export default function CategoriesSection() {
   return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
-      <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    <section className="w-full px-4 pb-16 sm:px-6 lg:px-8">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {CATEGORY_TYPES.map((t) => {
           const meta = TYPE_META[t];
           const categories = TYPE_SUBCATEGORIES[t]?.join(", ") || meta.description;

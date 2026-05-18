@@ -4,6 +4,7 @@ import { STRAPI_INTERNAL_URL } from "@/lib/config";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { parseLogin } from "@/lib/schemas";
 import { logger } from "@/lib/logger";
+import { isAdminUser } from "@/lib/admin-auth";
 
 export async function POST(request: Request) {
   try {
@@ -49,11 +50,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: message }, { status: 401 });
     }
 
+    let userWithRole = data.user;
+    try {
+      const meRes = await fetch(`${STRAPI_INTERNAL_URL}/api/users/me?populate=role`, {
+        headers: { Authorization: `Bearer ${data.jwt}` },
+      });
+      if (meRes.ok) userWithRole = await meRes.json();
+    } catch {
+      userWithRole = data.user;
+    }
+
     const response = NextResponse.json({
       user: {
-        id: data.user.id,
-        username: data.user.username,
-        email: data.user.email,
+        id: userWithRole.id,
+        username: userWithRole.username,
+        email: userWithRole.email,
+        isAdmin: isAdminUser(userWithRole),
       },
     });
 

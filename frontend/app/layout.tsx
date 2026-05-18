@@ -1,20 +1,23 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://roterdorn.de"),
   title: {
-    default: "roterdorn — Rezensionen für Bücher, Filme, Musik & Spiele",
+    default: "roterdorn — Rezensionen, Artikel und Interviews",
     template: "%s — roterdorn",
   },
   description:
-    "Ehrliche und ausführliche Rezensionen zu Büchern, Filmen, Musik und Spielen. Entdecke dein nächstes Lieblingsstück.",
+    "Ehrliche und ausführliche Rezensionen zu Büchern, Filmen, Musik, Spielen und Events.",
   keywords: [
     "Rezensionen",
     "Bücher",
     "Filme",
     "Spiele",
     "Musik",
+    "Events",
+    "Artikel",
+    "Interviews",
     "Reviews",
     "roterdorn",
   ],
@@ -22,9 +25,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "de_DE",
     siteName: "roterdorn",
-    title: "roterdorn — Rezensionen für Bücher, Filme, Musik & Spiele",
+    title: "roterdorn — Rezensionen, Artikel und Interviews",
     description:
-      "Ehrliche und ausführliche Rezensionen zu Büchern, Filmen, Musik und Spielen.",
+      "Ehrliche und ausführliche Rezensionen zu Büchern, Filmen, Musik, Spielen und Events.",
   },
 };
 
@@ -36,13 +39,7 @@ export default function RootLayout({
   return (
     <html lang="de" className="h-full" suppressHydrationWarning>
       <body className="min-h-full flex flex-col font-sans antialiased">
-        {/* Prevents FOUC by reading localStorage before React hydrates */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('theme');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}`,
-          }}
-        />
-        <ThemeProvider>{children}</ThemeProvider>
+        {children}
       </body>
     </html>
   );

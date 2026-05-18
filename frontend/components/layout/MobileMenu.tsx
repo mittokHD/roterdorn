@@ -20,8 +20,11 @@ interface MobileMenuProps {
  */
 export default function MobileMenu({ pathname, user, isLoading, onClose, onLogout }: MobileMenuProps) {
   return (
-    <nav className="md:hidden pb-4 border-t border-border-subtle" id="mobile-nav">
-      <div className="flex flex-col gap-1 pt-3">
+    <nav
+      className="fixed inset-x-0 top-16 z-40 h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain border-t border-border-subtle bg-[rgba(18,18,26,0.98)] px-4 pb-8 pt-3 backdrop-blur-xl 2xl:hidden [-webkit-overflow-scrolling:touch] [touch-action:pan-y]"
+      id="mobile-nav"
+    >
+      <div className="flex min-h-full flex-col gap-1">
 
         {/* Primary navigation links */}
         {NAV_ITEMS.map((item) => (
@@ -48,6 +51,15 @@ export default function MobileMenu({ pathname, user, isLoading, onClose, onLogou
               >
                 Profil ({user.username})
               </Link>
+              {user.isAdmin && (
+                <Link
+                  href="/admin/beitraege"
+                  className="px-4 py-2.5 rounded-lg text-sm font-medium text-text-accent"
+                  onClick={onClose}
+                >
+                  Admin
+                </Link>
+              )}
               <button
                 onClick={() => { onClose(); onLogout(); }}
                 className="px-4 py-2.5 rounded-lg text-sm font-medium text-left text-text-secondary hover:text-text-primary"

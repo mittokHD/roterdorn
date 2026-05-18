@@ -10,10 +10,7 @@ import { SearchIcon } from "@/components/ui/Icons";
 export default function HeroSection() {
   return (
     <section className="relative overflow-hidden">
-      {/* Background glow for depth and modern aesthetics */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full blur-3xl opacity-20 pointer-events-none bg-brand-500" />
-
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-20 pb-16 text-center relative z-10">
+      <div className="relative z-10 w-full px-4 pt-20 pb-16 text-center sm:px-6 lg:px-8">
         <div className="animate-fade-in-up">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight mb-6">
             <span className="text-text-primary">Entdecke, was </span>

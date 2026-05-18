@@ -99,6 +99,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Mein Lied\r\n02 – Dynamit\r\n03 – Was die Welt jetzt braucht\r\n04 – Herz? Verloren\r\n05 – AWG\r\n06 – Heute tanzen\r\n07 – iDisco\r\n08 – Find Dich gut\r\n09 – Keine Angst\r\n10 – Fan\r\n11 – Newton hatte recht\r\n12 – Das Traurigste\r\n13 – 3000\r\n14 – Sommer\r\n15 – Immer dabei"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -175,6 +183,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "51 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Mein Lied\r\n02 – Dynamit\r\n03 – Was die Welt jetzt braucht\r\n04 – Herz? Verloren\r\n05 – AWG\r\n06 – Heute tanzen\r\n07 – iDisco\r\n08 – Find Dich gut\r\n09 – Keine Angst\r\n10 – Fan\r\n11 – Newton hatte recht\r\n12 – Das Traurigste\r\n13 – 3000\r\n14 – Sommer\r\n15 – Immer dabei"
           }
         ]
       },
@@ -259,6 +275,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Once A Year\r\n02 – Have Yourself A Merry Little Christmas\r\n03 – Dumpa Ska\r\n04 – Petit Papa Noel\r\n05 – Rub-A-Dub Santa\r\n06 – Lulajze Jezuniu\r\n07 – Twelve Elves\r\n08 – All I Wanna Do\r\n09 – I Believe\r\n10 – I Saw Mommy Kissing Santa Claus\r\n11 – Les Anges Dans Nos Campagnes\r\n12 – The Christmas Song\r\n13 – Christmas Again"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -339,6 +363,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Once A Year\r\n02 – Have Yourself A Merry Little Christmas\r\n03 – Dumpa Ska\r\n04 – Petit Papa Noel\r\n05 – Rub-A-Dub Santa\r\n06 – Lulajze Jezuniu\r\n07 – Twelve Elves\r\n08 – All I Wanna Do\r\n09 – I Believe\r\n10 – I Saw Mommy Kissing Santa Claus\r\n11 – Les Anges Dans Nos Campagnes\r\n12 – The Christmas Song\r\n13 – Christmas Again"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -400,6 +432,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "70 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Augen in der Großstadt\r\n02 – Singt eener uffn Hof\r\n03 – Wahre Liebe\r\n04 – Mutterns Hände\r\n05 – Park Monceau\r\n06 – Der Graben\r\n07 – An das Publikum\r\n08 – Das Lied vom Kompromiss\r\n09 – Wenn die Igel in der Abendstunde\r\n10 – Drei Minuten Gehör\r\n11 – Danach\r\n12 – Die Herren Zuhörer\r\n13 – Media in vita\r\n14 – Das Ideal\r\n15 – Ideal und Wirklichkeit\r\n16 – Aus!\r\n17 – Ein älterer, aber leicht besoffener Herr\r\n18 – Aufgewachsen bei\r\n19 – Zur soziologischen Psychologie der Löcher\r\n20 – Jener Tag\r\n21 – Der Graben (feat. Bernd Marquardt)\r\n22 – Wenn die Igel in der Abendstunde (feat. Bernd Marquardt)"
           }
         ]
       },
@@ -469,6 +509,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Augen in der Großstadt\r\n02 – Singt eener uffn Hof\r\n03 – Wahre Liebe\r\n04 – Mutterns Hände\r\n05 – Park Monceau\r\n06 – Der Graben\r\n07 – An das Publikum\r\n08 – Das Lied vom Kompromiss\r\n09 – Wenn die Igel in der Abendstunde\r\n10 – Drei Minuten Gehör\r\n11 – Danach\r\n12 – Die Herren Zuhörer\r\n13 – Media in vita\r\n14 – Das Ideal\r\n15 – Ideal und Wirklichkeit\r\n16 – Aus!\r\n17 – Ein älterer, aber leicht besoffener Herr\r\n18 – Aufgewachsen bei\r\n19 – Zur soziologischen Psychologie der Löcher\r\n20 – Jener Tag\r\n21 – Der Graben (feat. Bernd Marquardt)\r\n22 – Wenn die Igel in der Abendstunde (feat. Bernd Marquardt)"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -530,6 +578,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "70 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Augen in der Großstadt\r\n02 – Singt eener uffn Hof\r\n03 – Wahre Liebe\r\n04 – Mutterns Hände\r\n05 – Park Monceau\r\n06 – Der Graben\r\n07 – An das Publikum\r\n08 – Das Lied vom Kompromiss\r\n09 – Wenn die Igel in der Abendstunde\r\n10 – Drei Minuten Gehör\r\n11 – Danach\r\n12 – Die Herren Zuhörer\r\n13 – Media in vita\r\n14 – Das Ideal\r\n15 – Ideal und Wirklichkeit\r\n16 – Aus!\r\n17 – Ein älterer, aber leicht besoffener Herr\r\n18 – Aufgewachsen bei\r\n19 – Zur soziologischen Psychologie der Löcher\r\n20 – Jener Tag\r\n21 – Der Graben (feat. Bernd Marquardt)\r\n22 – Wenn die Igel in der Abendstunde (feat. Bernd Marquardt)"
           }
         ]
       },
@@ -599,6 +655,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Augen in der Großstadt\r\n02 – Singt eener uffn Hof\r\n03 – Wahre Liebe\r\n04 – Mutterns Hände\r\n05 – Park Monceau\r\n06 – Der Graben\r\n07 – An das Publikum\r\n08 – Das Lied vom Kompromiss\r\n09 – Wenn die Igel in der Abendstunde\r\n10 – Drei Minuten Gehör\r\n11 – Danach\r\n12 – Die Herren Zuhörer\r\n13 – Media in vita\r\n14 – Das Ideal\r\n15 – Ideal und Wirklichkeit\r\n16 – Aus!\r\n17 – Ein älterer, aber leicht besoffener Herr\r\n18 – Aufgewachsen bei\r\n19 – Zur soziologischen Psychologie der Löcher\r\n20 – Jener Tag\r\n21 – Der Graben (feat. Bernd Marquardt)\r\n22 – Wenn die Igel in der Abendstunde (feat. Bernd Marquardt)"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -625,6 +689,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Das Bett"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.bett-club.de/",
+            "href": "http://www.bett-club.de/"
           }
         ]
       },
@@ -659,6 +732,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.bett-club.de/",
+            "href": "http://www.bett-club.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -689,6 +771,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.alte-schmelze.de/",
+            "href": "http://www.alte-schmelze.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -707,6 +798,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Alte Schmelze"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.alte-schmelze.de/",
+            "href": "http://www.alte-schmelze.de/"
           }
         ]
       },
@@ -756,6 +856,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
             "label": "Alternative",
             "href": "/musikgenre/alternative",
             "slug": "alternative"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Mindbender\r\n02 – Invite To Eternity\r\n03 – Ride Off Into The Sunset And Disappear\r\n04 – Before I Die\r\n05 – Patch Of Blue\r\n06 – Cola In Mongolia\r\n07 – Leyla’s Find\r\n08 – Shingle\r\n09 – Organism\r\n10 – Hazyland"
           }
         ]
       },
@@ -813,6 +921,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
             "label": "Alternative",
             "href": "/musikgenre/alternative",
             "slug": "alternative"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Mindbender\r\n02 – Invite To Eternity\r\n03 – Ride Off Into The Sunset And Disappear\r\n04 – Before I Die\r\n05 – Patch Of Blue\r\n06 – Cola In Mongolia\r\n07 – Leyla’s Find\r\n08 – Shingle\r\n09 – Organism\r\n10 – Hazyland"
           }
         ]
       },
@@ -7738,6 +7854,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Sharks\r\n02 – I See Love\r\n03 – Cobra\r\n04 – We Were Found In The Fog\r\n05 – Reservation Girl\r\n06 – FLS\r\n07 – Skyline\r\n08 – I Don't Mind\r\n09 – Polka In F#m\r\n10 – This Would Be A Fine Job To Retire From"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -7809,6 +7933,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "36 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Sharks\r\n02 – I See Love\r\n03 – Cobra\r\n04 – We Were Found In The Fog\r\n05 – Reservation Girl\r\n06 – FLS\r\n07 – Skyline\r\n08 – I Don't Mind\r\n09 – Polka In F#m\r\n10 – This Would Be A Fine Job To Retire From"
           }
         ]
       },
@@ -8236,6 +8368,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Scream\r\n02 – Venus In Furs\r\n03 – Sleaze\r\n04 – Genius\r\n05 – Indigo\r\n06 – Lullaby\r\n07 – Blood Money\r\n08 – Dirty Killer\r\n09 – Swallow\r\n10 – Hard Man To Kill\r\n11 – Liberate\r\n12 – Swallow (Acoustic)\r\n13 – Genius (Acoustic)"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -8287,6 +8427,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "49 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Scream\r\n02 – Venus In Furs\r\n03 – Sleaze\r\n04 – Genius\r\n05 – Indigo\r\n06 – Lullaby\r\n07 – Blood Money\r\n08 – Dirty Killer\r\n09 – Swallow\r\n10 – Hard Man To Kill\r\n11 – Liberate\r\n12 – Swallow (Acoustic)\r\n13 – Genius (Acoustic)"
           }
         ]
       },
@@ -8346,6 +8494,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Scream\r\n02 – Venus In Furs\r\n03 – Sleaze\r\n04 – Genius\r\n05 – Indigo\r\n06 – Lullaby\r\n07 – Blood Money\r\n08 – Dirty Killer\r\n09 – Swallow\r\n10 – Hard Man To Kill\r\n11 – Liberate\r\n12 – Swallow (Acoustic)\r\n13 – Genius (Acoustic)"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -8397,6 +8553,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "49 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Scream\r\n02 – Venus In Furs\r\n03 – Sleaze\r\n04 – Genius\r\n05 – Indigo\r\n06 – Lullaby\r\n07 – Blood Money\r\n08 – Dirty Killer\r\n09 – Swallow\r\n10 – Hard Man To Kill\r\n11 – Liberate\r\n12 – Swallow (Acoustic)\r\n13 – Genius (Acoustic)"
           }
         ]
       },
@@ -8476,6 +8640,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Hello, Good Evening\r\n02 – When You're Drunk\r\n03 – Cocoa Bean\r\n04 – Can't Stop\r\n05 – Adagio\r\n06 – Mr. Big Shot\r\n07 – Bingo Bongo\r\n08 – Gun Bae\r\n09 – The Exorcist\r\n10 – The Rule\r\n11 – The Way Of Mercy\r\n12 – Gimme Nuff Ska\r\n13 – Paluku Rock\r\n14 – Two Wrongs\r\n15 – Galang Dada"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -8547,6 +8719,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "57 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Hello, Good Evening\r\n02 – When You're Drunk\r\n03 – Cocoa Bean\r\n04 – Can't Stop\r\n05 – Adagio\r\n06 – Mr. Big Shot\r\n07 – Bingo Bongo\r\n08 – Gun Bae\r\n09 – The Exorcist\r\n10 – The Rule\r\n11 – The Way Of Mercy\r\n12 – Gimme Nuff Ska\r\n13 – Paluku Rock\r\n14 – Two Wrongs\r\n15 – Galang Dada"
           }
         ]
       },
@@ -8963,6 +9143,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.palmengarten.de/",
+            "href": "http://www.palmengarten.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -8989,6 +9178,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Palmengarten"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.palmengarten.de/",
+            "href": "http://www.palmengarten.de/"
           }
         ]
       },
@@ -10743,6 +10941,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Der hinterlistige Heinrich\r\n02 – Die Schnecken\r\n03 – Ein frohes Ereignis\r\n04 – Fipps, der Affe, am Klavier\r\n05 – Die Fliege\r\n06 – Der Maulwurf\r\n07 – Der Philosoph\r\n08 – Der Frosch\r\n09 – Hans Huckebein – Streiche und Tod\r\n10 – Fink und Frosch\r\n11 – Erster Streich"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -10809,6 +11015,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "38 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Der hinterlistige Heinrich\r\n02 – Die Schnecken\r\n03 – Ein frohes Ereignis\r\n04 – Fipps, der Affe, am Klavier\r\n05 – Die Fliege\r\n06 – Der Maulwurf\r\n07 – Der Philosoph\r\n08 – Der Frosch\r\n09 – Hans Huckebein – Streiche und Tod\r\n10 – Fink und Frosch\r\n11 – Erster Streich"
           }
         ]
       },
@@ -10883,6 +11097,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Der hinterlistige Heinrich\r\n02 – Die Schnecken\r\n03 – Ein frohes Ereignis\r\n04 – Fipps, der Affe, am Klavier\r\n05 – Die Fliege\r\n06 – Der Maulwurf\r\n07 – Der Philosoph\r\n08 – Der Frosch\r\n09 – Hans Huckebein – Streiche und Tod\r\n10 – Fink und Frosch\r\n11 – Erster Streich"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -10949,6 +11171,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "38 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Der hinterlistige Heinrich\r\n02 – Die Schnecken\r\n03 – Ein frohes Ereignis\r\n04 – Fipps, der Affe, am Klavier\r\n05 – Die Fliege\r\n06 – Der Maulwurf\r\n07 – Der Philosoph\r\n08 – Der Frosch\r\n09 – Hans Huckebein – Streiche und Tod\r\n10 – Fink und Frosch\r\n11 – Erster Streich"
           }
         ]
       },
@@ -13202,6 +13432,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Radioland ( Jim Kerr)\r\n02 – All The time Running (Shelly Poole & Charity Hair)\r\n03 – Blue Eyes Are Cheating (Jim Kerr)\r\n04 – Fast Forest Rain (Kate Havnevik)\r\n05 – Aim For The Heart (Catherine AD)\r\n06 – Candle Is The Ring (Helicopter Girl)\r\n07 – Clean Break (Peter Murphy)\r\n08 – Diamonds In The Snow (Dot Allison)\r\n09 – When Stars Fall (Shelly Poole)\r\n10 – Cellophane Girl (Shelly Poole)\r\n11 – No Trains Stop Here (Catherine AD)\r\n12 – Where The Wild Things Are (Jim Kerr)"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -13273,6 +13511,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "47 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Radioland ( Jim Kerr)\r\n02 – All The time Running (Shelly Poole & Charity Hair)\r\n03 – Blue Eyes Are Cheating (Jim Kerr)\r\n04 – Fast Forest Rain (Kate Havnevik)\r\n05 – Aim For The Heart (Catherine AD)\r\n06 – Candle Is The Ring (Helicopter Girl)\r\n07 – Clean Break (Peter Murphy)\r\n08 – Diamonds In The Snow (Dot Allison)\r\n09 – When Stars Fall (Shelly Poole)\r\n10 – Cellophane Girl (Shelly Poole)\r\n11 – No Trains Stop Here (Catherine AD)\r\n12 – Where The Wild Things Are (Jim Kerr)"
           }
         ]
       },
@@ -13516,6 +13762,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Intro (Bahnsteiglied)\r\n02 – Klugscheißerlied\r\n03 – Schüttel dich\r\n04 – Stay Folk!\r\n05 – Fieber\r\n06 – Po\r\n07 – Heidenröslein – was zuvor geschah\r\n08 – .&-\r\n09 – Fünfter Streich\r\n10 – Rapunzel\r\n11 – Eigentlich nicht viel zu sagen\r\n12 – Outro\r\n13 – En plus"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -13577,6 +13831,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "44 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Intro (Bahnsteiglied)\r\n02 – Klugscheißerlied\r\n03 – Schüttel dich\r\n04 – Stay Folk!\r\n05 – Fieber\r\n06 – Po\r\n07 – Heidenröslein – was zuvor geschah\r\n08 – .&-\r\n09 – Fünfter Streich\r\n10 – Rapunzel\r\n11 – Eigentlich nicht viel zu sagen\r\n12 – Outro\r\n13 – En plus"
           }
         ]
       },
@@ -13765,6 +14027,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.spielwarenmesse.de/",
+            "href": "http://www.spielwarenmesse.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -13799,6 +14070,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Messe Nürnberg"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.spielwarenmesse.de/",
+            "href": "http://www.spielwarenmesse.de/"
           }
         ]
       },
@@ -13841,6 +14121,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.spielwarenmesse.de/",
+            "href": "http://www.spielwarenmesse.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -13875,6 +14164,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Messe Nürnberg"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.spielwarenmesse.de/",
+            "href": "http://www.spielwarenmesse.de/"
           }
         ]
       },
@@ -15268,6 +15566,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Velocity Bird\r\n02 – Seesaw Sway\r\n03 – Peace To Each\r\n04 – I Spit Roses\r\n05 – Never Fall Out\r\n06 – Memory Go\r\n07 – The Prince & The Old Lady Shade\r\n08 – Uneven & Brittle\r\n09 – Slowdown\r\n10 – Secret Silk Society\r\n11 – Crème De La Crème"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -15353,6 +15659,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Velocity Bird\r\n02 – Seesaw Sway\r\n03 – Peace To Each\r\n04 – I Spit Roses\r\n05 – Never Fall Out\r\n06 – Memory Go\r\n07 – The Prince & The Old Lady Shade\r\n08 – Uneven & Brittle\r\n09 – Slowdown\r\n10 – Secret Silk Society\r\n11 – Crème De La Crème"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -15429,6 +15743,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "75 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Open Your Eyes\r\n02 – Cotton Candy Hurricane\r\n03 – White\r\n04 – Candy Jar\r\n05 – Dream Machine\r\n06 – Wild Bees Honey\r\n07 – Under The Neon Sky\r\n08 – Magnolia\r\n09 – 20 Steps\r\n10 – Ode To A Dream\r\n11 – Tell Me\r\n12 – Unparadised\r\n\r\n01 – Wild Bees Honey\r\n02 – Candy Cotton Hurricane\r\n03 – Wicked Games\r\n04 – Outro\r\n05 – Ode To A Dream\r\n06 – Under The Neon Sky\r\n07 – Magnolia\r\n08 – Candy Jar"
           }
         ]
       },
@@ -15513,6 +15835,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Open Your Eyes\r\n02 – Cotton Candy Hurricane\r\n03 – White\r\n04 – Candy Jar\r\n05 – Dream Machine\r\n06 – Wild Bees Honey\r\n07 – Under The Neon Sky\r\n08 – Magnolia\r\n09 – 20 Steps\r\n10 – Ode To A Dream\r\n11 – Tell Me\r\n12 – Unparadised\r\n\r\n01 – Wild Bees Honey\r\n02 – Candy Cotton Hurricane\r\n03 – Wicked Games\r\n04 – Outro\r\n05 – Ode To A Dream\r\n06 – Under The Neon Sky\r\n07 – Magnolia\r\n08 – Candy Jar"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -15593,6 +15923,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Open Your Eyes\r\n02 – Cotton Candy Hurricane\r\n03 – White\r\n04 – Candy Jar\r\n05 – Dream Machine\r\n06 – Wild Bees Honey\r\n07 – Under The Neon Sky\r\n08 – Magnolia\r\n09 – 20 Steps\r\n10 – Ode To A Dream\r\n11 – Tell Me\r\n12 – Unparadised\r\n\r\n01 – Wild Bees Honey\r\n02 – Candy Cotton Hurricane\r\n03 – Wicked Games\r\n04 – Outro\r\n05 – Ode To A Dream\r\n06 – Under The Neon Sky\r\n07 – Magnolia\r\n08 – Candy Jar"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -15669,6 +16007,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "75 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Open Your Eyes\r\n02 – Cotton Candy Hurricane\r\n03 – White\r\n04 – Candy Jar\r\n05 – Dream Machine\r\n06 – Wild Bees Honey\r\n07 – Under The Neon Sky\r\n08 – Magnolia\r\n09 – 20 Steps\r\n10 – Ode To A Dream\r\n11 – Tell Me\r\n12 – Unparadised\r\n\r\n01 – Wild Bees Honey\r\n02 – Candy Cotton Hurricane\r\n03 – Wicked Games\r\n04 – Outro\r\n05 – Ode To A Dream\r\n06 – Under The Neon Sky\r\n07 – Magnolia\r\n08 – Candy Jar"
           }
         ]
       },
@@ -17223,6 +17569,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Amour Fou\r\n02 – Paying The Price\r\n03 – Lonely Seabird\r\n04 – Sugar Castles\r\n05 – Kookaburra\r\n06 – Matze"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -17299,6 +17653,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "22 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Amour Fou\r\n02 – Paying The Price\r\n03 – Lonely Seabird\r\n04 – Sugar Castles\r\n05 – Kookaburra\r\n06 – Matze"
           }
         ]
       },
@@ -20060,6 +20422,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Kerry Tunes\r\n02 – Hills Of Connemara\r\n03 – Johnny I Hardly Knew Ye\r\n04 – Wraggle Taggle Gypsie\r\n05 – If I Ever Leave\r\n06 – Tell Me Ma\r\n07 – Molly Malone\r\n08 – Gravel Walks\r\n09 – Star Of The County Down\r\n10 – Selfish Man\r\n11 – Foggy Dew\r\n12 – Wild Rover\r\n13 – Black Friday Rule\r\n14 – Kilburn High Road\r\n15 – Oak Tree\r\n16 – Whiskey In The Jar"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -20121,6 +20491,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "57 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Kerry Tunes\r\n02 – Hills Of Connemara\r\n03 – Johnny I Hardly Knew Ye\r\n04 – Wraggle Taggle Gypsie\r\n05 – If I Ever Leave\r\n06 – Tell Me Ma\r\n07 – Molly Malone\r\n08 – Gravel Walks\r\n09 – Star Of The County Down\r\n10 – Selfish Man\r\n11 – Foggy Dew\r\n12 – Wild Rover\r\n13 – Black Friday Rule\r\n14 – Kilburn High Road\r\n15 – Oak Tree\r\n16 – Whiskey In The Jar"
           }
         ]
       },
@@ -21931,6 +22309,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Forever\r\n02 – Burn Away\r\n03 – Left Behind\r\n04 – Pale (Rubber Unicorn Mix)\r\n05 – Control (Tweaker Mix)\r\n06 – Shallow Grave (Good For Her Mix)\r\n07 – Pins And Needles (Skold Mix)\r\n08 – Shallow Grave (Assemblage 23 Mix)\r\nVideo-Track – In The Dark"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -21997,6 +22383,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "32 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Forever\r\n02 – Burn Away\r\n03 – Left Behind\r\n04 – Pale (Rubber Unicorn Mix)\r\n05 – Control (Tweaker Mix)\r\n06 – Shallow Grave (Good For Her Mix)\r\n07 – Pins And Needles (Skold Mix)\r\n08 – Shallow Grave (Assemblage 23 Mix)\r\nVideo-Track – In The Dark"
           }
         ]
       },
@@ -22215,6 +22609,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Inhuman (Album Version)\r\n02 – Inhuman (Combichrist Remix)\r\n03 – Inhuman (iVardensphere Remix)\r\n04 – Inhuman (Imperative Reaction Remix)\r\n05 – Inhuman (Panic Lift Remix)\r\n06 – Inhuman (Deadbeat Remix)\r\n07 – DAF\r\n08 – Hit The Streets (Whiteqube Remix)"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -22281,6 +22683,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "35 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Inhuman (Album Version)\r\n02 – Inhuman (Combichrist Remix)\r\n03 – Inhuman (iVardensphere Remix)\r\n04 – Inhuman (Imperative Reaction Remix)\r\n05 – Inhuman (Panic Lift Remix)\r\n06 – Inhuman (Deadbeat Remix)\r\n07 – DAF\r\n08 – Hit The Streets (Whiteqube Remix)"
           }
         ]
       },
@@ -23084,6 +23494,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Neversea\r\n02 – Into the Red\r\n03 – The Only One\r\n04 – Timeflows (Part 1)\r\n05 – Timeflows (Part 2)"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -23155,6 +23573,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "26 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Neversea\r\n02 – Into the Red\r\n03 – The Only One\r\n04 – Timeflows (Part 1)\r\n05 – Timeflows (Part 2)"
           }
         ]
       },
@@ -23507,6 +23933,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Bodenstown Churchyard\r\n02 – My Son Tim\r\n03 – Bonny Light Horseman\r\n04 – April´s Fool / I Ne´er Shall Wean Her\r\n05 – Isle Of St. Helena\r\n06 – Johnston\r\n07 – Dark Horse On The Wind\r\n08 – Sanctuary\r\n09 – Keg Of Brandy\r\n10 – Crooked Road To Dublin / Considine´s Grove\r\n11 – Southwind"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -23573,6 +24007,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "43 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Bodenstown Churchyard\r\n02 – My Son Tim\r\n03 – Bonny Light Horseman\r\n04 – April´s Fool / I Ne´er Shall Wean Her\r\n05 – Isle Of St. Helena\r\n06 – Johnston\r\n07 – Dark Horse On The Wind\r\n08 – Sanctuary\r\n09 – Keg Of Brandy\r\n10 – Crooked Road To Dublin / Considine´s Grove\r\n11 – Southwind"
           }
         ]
       },
@@ -23647,6 +24089,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Bodenstown Churchyard\r\n02 – My Son Tim\r\n03 – Bonny Light Horseman\r\n04 – April´s Fool / I Ne´er Shall Wean Her\r\n05 – Isle Of St. Helena\r\n06 – Johnston\r\n07 – Dark Horse On The Wind\r\n08 – Sanctuary\r\n09 – Keg Of Brandy\r\n10 – Crooked Road To Dublin / Considine´s Grove\r\n11 – Southwind"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -23713,6 +24163,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "43 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Bodenstown Churchyard\r\n02 – My Son Tim\r\n03 – Bonny Light Horseman\r\n04 – April´s Fool / I Ne´er Shall Wean Her\r\n05 – Isle Of St. Helena\r\n06 – Johnston\r\n07 – Dark Horse On The Wind\r\n08 – Sanctuary\r\n09 – Keg Of Brandy\r\n10 – Crooked Road To Dublin / Considine´s Grove\r\n11 – Southwind"
           }
         ]
       },
@@ -25365,6 +25823,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Hard To Please\r\n02 – Immaculate Deception\r\n03 – So Far Away\r\n04 – Doppelgänger\r\n05 – Losing You (Album Version)\r\n06 – Your Girl\r\n07 – A Certain Beauty\r\n08 – Dance Of Delusion"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -25431,6 +25897,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "33 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Hard To Please\r\n02 – Immaculate Deception\r\n03 – So Far Away\r\n04 – Doppelgänger\r\n05 – Losing You (Album Version)\r\n06 – Your Girl\r\n07 – A Certain Beauty\r\n08 – Dance Of Delusion"
           }
         ]
       },
@@ -26032,6 +26506,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Laa Da Die\r\n02 – Good Company\r\n03 – Gravey\r\n04 – Happiness\r\n05 – She Looked Like A Friend\r\n06 – Best Not Make A Scene\r\n07 – Dear Demon\r\n08 – This Wine Is A Kiss\r\n09 – Closer\r\n10 – I'll Walk With You\r\n11 – Reprise"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -26103,6 +26585,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "37 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Laa Da Die\r\n02 – Good Company\r\n03 – Gravey\r\n04 – Happiness\r\n05 – She Looked Like A Friend\r\n06 – Best Not Make A Scene\r\n07 – Dear Demon\r\n08 – This Wine Is A Kiss\r\n09 – Closer\r\n10 – I'll Walk With You\r\n11 – Reprise"
           }
         ]
       },
@@ -28235,6 +28725,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.merz-verlag.com/",
+            "href": "http://www.merz-verlag.com/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -28269,6 +28768,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Grugahalle Essen"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.merz-verlag.com/",
+            "href": "http://www.merz-verlag.com/"
           }
         ]
       },
@@ -28311,6 +28819,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.amphi-festival.de/",
+            "href": "http://www.amphi-festival.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -28345,6 +28862,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Lanxess Arena"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.amphi-festival.de/",
+            "href": "http://www.amphi-festival.de/"
           }
         ]
       },
@@ -29627,6 +30153,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.rpc-germany.de/",
+            "href": "http://www.rpc-germany.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -29653,6 +30188,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "RPC Germany"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.rpc-germany.de/",
+            "href": "http://www.rpc-germany.de/"
           }
         ]
       },
@@ -29687,6 +30231,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.rpc-germany.de/",
+            "href": "http://www.rpc-germany.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -29713,6 +30266,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "RPC Germany"
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.rpc-germany.de/",
+            "href": "http://www.rpc-germany.de/"
           }
         ]
       },
@@ -30838,6 +31400,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Sad Girl\r\n02 – Black Jesus\r\n03 – Today\r\n04 – Broken\r\n05 – Stone In My Hand\r\n06 – Weakness\r\n07 – Children´s Story\r\n08 – Stay\r\n09 – My Medicine\r\n10 – Lonely Road\r\n11 – Grandma´s Hand\r\n12 – Jump Around?"
+          }
+        ]
+      },
+      {
         "label": "Erscheinungsdatum",
         "values": [
           {
@@ -30909,6 +31479,14 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "45 Minuten"
+          }
+        ]
+      },
+      {
+        "label": "Tracklist",
+        "values": [
+          {
+            "label": "01 – Sad Girl\r\n02 – Black Jesus\r\n03 – Today\r\n04 – Broken\r\n05 – Stone In My Hand\r\n06 – Weakness\r\n07 – Children´s Story\r\n08 – Stay\r\n09 – My Medicine\r\n10 – Lonely Road\r\n11 – Grandma´s Hand\r\n12 – Jump Around?"
           }
         ]
       },
@@ -32849,6 +33427,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.kulturzelt-braunschweig.de/",
+            "href": "http://www.kulturzelt-braunschweig.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -32875,6 +33462,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Kulturzelt Braunschweig e.V."
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.kulturzelt-braunschweig.de/",
+            "href": "http://www.kulturzelt-braunschweig.de/"
           }
         ]
       },
@@ -32909,6 +33505,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         ]
       },
       {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.kulturzelt-braunschweig.de/",
+            "href": "http://www.kulturzelt-braunschweig.de/"
+          }
+        ]
+      },
+      {
         "label": "Start",
         "values": [
           {
@@ -32935,6 +33540,15 @@ export const LEGACY_REVIEW_DETAILS: Record<string, LegacyReviewDetails> = {
         "values": [
           {
             "label": "Kulturzelt Braunschweig e.V."
+          }
+        ]
+      },
+      {
+        "label": "Website",
+        "values": [
+          {
+            "label": "http://www.kulturzelt-braunschweig.de/",
+            "href": "http://www.kulturzelt-braunschweig.de/"
           }
         ]
       },

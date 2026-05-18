@@ -102,6 +102,7 @@ const rowsByPostType = {
     "label",
     "musikgenre",
     "musiklaufzeit",
+    "tracklist",
     "releasedatum",
     "erscheinungsdatum",
     "sprache",
@@ -116,7 +117,7 @@ const rowsByPostType = {
     "erscheinungsdatum",
     "sprache",
   ],
-  event: ["ort", "zeitstart", "zeitende", "sprache"],
+  event: ["ort", "ortlink", "zeitstart", "zeitende", "sprache"],
   post: ["erscheinungsdatum", "sprache"],
 };
 
@@ -130,8 +131,10 @@ const metaLabels = {
   fsk: "FSK",
   filmlaufzeit: "Laufzeit",
   musiklaufzeit: "Laufzeit",
+  tracklist: "Tracklist",
   releasedatum: "Releasedatum",
   ort: "Ort",
+  ortlink: "Website",
   zeitstart: "Start",
   zeitende: "Ende",
 };
@@ -162,6 +165,17 @@ function formatMetaValue(key, value) {
     return `FSK ${raw}`;
   }
   return raw;
+}
+
+function formatMetaHref(key, value) {
+  const raw = String(value || "").trim();
+  if (!raw) return undefined;
+
+  if (key === "ortlink" && /^https?:\/\//i.test(raw)) {
+    return raw;
+  }
+
+  return undefined;
 }
 
 function byName(a, b) {
@@ -289,6 +303,8 @@ async function main() {
   }
 
   const data = {};
+  const slugAliases = {};
+  const slugTargets = {};
   const taxonomyIndex = {};
 
   for (const row of termRows) {
@@ -341,7 +357,12 @@ async function main() {
       }
 
       const value = formatMetaValue(key, meta[key]);
-      if (value) rows.push({ label: metaLabels[key] || key, values: [{ label: value }] });
+      if (value) {
+        rows.push({
+          label: metaLabels[key] || key,
+          values: [{ label: value, href: formatMetaHref(key, meta[key]) }],
+        });
+      }
     }
 
     const details = {
@@ -350,8 +371,22 @@ async function main() {
       rows,
     };
 
+    const canonicalSlug = generateSlug(post.post_title);
+
     for (const slug of new Set(publicSlugs(post))) {
       data[slug] = details;
+      slugTargets[slug] = {
+        slug: canonicalSlug,
+        type: effectiveType,
+        title: post.post_title,
+      };
+      if (slug !== canonicalSlug) {
+        slugAliases[slug] = {
+          slug: canonicalSlug,
+          type: effectiveType,
+          title: post.post_title,
+        };
+      }
     }
   }
 
@@ -399,7 +434,25 @@ export const LEGACY_TAXONOMY_INDEX: Record<string, LegacyTaxonomyEntry> = ${JSON
 `;
 
   await fs.writeFile(outputPath, content, "utf8");
+
+  const aliasesOutputPath = path.join(rootDir, "frontend", "lib", "legacy-review-aliases.generated.ts");
+  const aliasesContent = `// Generated from the legacy WordPress review slugs by migration/generate-legacy-review-details.js.
+// Do not edit individual entries by hand; regenerate after legacy metadata changes.
+
+export interface LegacyReviewSlugTarget {
+  slug: string;
+  type: "Buch" | "Film" | "Musik" | "Spiel" | "Event";
+  title: string;
+}
+
+export const LEGACY_REVIEW_SLUG_ALIASES: Record<string, LegacyReviewSlugTarget> = ${JSON.stringify(slugAliases, null, 2)};
+
+export const LEGACY_REVIEW_SLUG_TARGETS: Record<string, LegacyReviewSlugTarget> = ${JSON.stringify(slugTargets, null, 2)};
+`;
+
+  await fs.writeFile(aliasesOutputPath, aliasesContent, "utf8");
   console.log(`Wrote ${outputPath}`);
+  console.log(`Wrote ${aliasesOutputPath}`);
   console.log(`${Object.keys(data).length} slug keys generated`);
 }
 

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { getRezensionenByType } from "@/lib/strapi";
 import { TYPE_SLUG_MAP, TYPE_LABELS } from "@/lib/types";
 import { TYPE_META, TYPE_SUBCATEGORIES } from "@/lib/constants";
+import { SITE_URL } from "@/lib/config";
 import type { Rezension } from "@/lib/types";
 import ReviewCard from "@/components/reviews/ReviewCard";
 import EmptyState from "@/components/ui/EmptyState";
@@ -27,7 +28,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${TYPE_LABELS[rezensionType]} — Rezensionen`,
-    description: `Alle ${TYPE_LABELS[rezensionType]}-Rezensionen auf roterdorn. Ehrliche Reviews mit Bewertungen.`,
+    description: `Alle ${TYPE_LABELS[rezensionType]}-Rezensionen auf roterdorn.`,
+    alternates: {
+      canonical: `${SITE_URL}/${TYPE_META[rezensionType].slug}`,
+    },
   };
 }
 

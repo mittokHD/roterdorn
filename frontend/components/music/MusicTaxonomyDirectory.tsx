@@ -52,8 +52,8 @@ const filterHref = (taxonomy: MusicTaxonomySlug, letter: string | null) => {
   return `/musik?${params.toString()}`;
 };
 
-const searchHref = (term: MusicTaxonomyTerm) =>
-  `/suche?q=${encodeURIComponent(term.name)}`;
+const termHref = (taxonomy: MusicTaxonomySlug, term: MusicTaxonomyTerm) =>
+  `/${taxonomy}/${term.slug}`;
 
 interface MusicTaxonomyDirectoryProps {
   taxonomy: MusicTaxonomySlug;
@@ -135,7 +135,7 @@ export default function MusicTaxonomyDirectory({
                 {groups.get(letter)?.map((term) => (
                   <li key={term.slug}>
                     <Link
-                      href={searchHref(term)}
+                      href={termHref(taxonomy, term)}
                       className="text-sm text-text-accent underline-offset-2 transition-colors hover:text-brand-400 hover:underline"
                     >
                       {term.name}

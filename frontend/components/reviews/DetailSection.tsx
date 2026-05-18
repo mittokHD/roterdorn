@@ -16,6 +16,7 @@ interface DetailSectionProps {
   details: DetailComponent[];
   type: RezensionType;
   legacyDetails?: LegacyReviewDetails;
+  customRows?: LegacyReviewDetailRow[];
   coverUrl?: string;
   coverAlt?: string;
 }
@@ -111,14 +112,17 @@ export default function DetailSection({
   details,
   type,
   legacyDetails,
+  customRows = [],
   coverUrl,
   coverAlt,
 }: DetailSectionProps) {
-  if (legacyDetails?.rows.length) {
+  const mergedRows = mergeDetailRows(legacyDetails?.rows || [], customRows);
+
+  if (mergedRows.length) {
     return (
       <LegacyDetailCard
         type={type}
-        rows={legacyDetails.rows}
+        rows={mergedRows}
         coverUrl={coverUrl}
         coverAlt={coverAlt}
       />
@@ -141,6 +145,22 @@ export default function DetailSection({
       {renderedDetails}
     </div>
   );
+}
+
+function mergeDetailRows(baseRows: LegacyReviewDetailRow[], customRows: LegacyReviewDetailRow[]) {
+  const rows = [...baseRows];
+
+  for (const customRow of customRows) {
+    if (!customRow.values?.length) continue;
+    const existingIndex = rows.findIndex((row) => row.label.toLowerCase() === customRow.label.toLowerCase());
+    if (existingIndex >= 0) {
+      rows[existingIndex] = customRow;
+    } else {
+      rows.push(customRow);
+    }
+  }
+
+  return rows;
 }
 
 function LegacyDetailCard({
@@ -184,18 +204,21 @@ function LegacyDetailCard({
 
 function LegacyDetailRow({ row }: { row: LegacyReviewDetailRow }) {
   const text = row.values.map((value) => value.label).join(", ");
-  const isLong = row.values.length > 2 || text.length > 42;
+  const preservesLines = row.values.some((value) => value.label.includes("\n"));
+  const isLong = preservesLines || row.values.length > 2 || text.length > 42;
 
   return (
     <div className={isLong ? "sm:col-span-2" : undefined}>
       <dt className="mb-0.5 text-xs text-text-muted">{row.label}</dt>
-      <dd className="text-sm font-medium leading-6 text-text-primary">
+      <dd className={`text-sm font-medium leading-6 text-text-primary ${preservesLines ? "whitespace-pre-line" : ""}`}>
         {row.values.map((value, index) => (
           <span key={`${value.label}-${value.href || index}`}>
             {index > 0 && ", "}
             {value.href ? (
               <Link
                 href={value.href}
+                target={value.href.startsWith("http") ? "_blank" : undefined}
+                rel={value.href.startsWith("http") ? "noopener noreferrer" : undefined}
                 className="text-text-accent underline-offset-2 transition-colors hover:text-brand-400 hover:underline"
               >
                 {value.label}

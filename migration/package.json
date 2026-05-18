@@ -9,6 +9,7 @@
     "import:covers": "node import-covers.js",
     "export:music-taxonomies": "node generate-music-taxonomy-data.js",
     "export:legacy-details": "node generate-legacy-review-details.js",
+    "export:legacy-editorial": "node generate-legacy-editorial-data.js",
     "sql:review-content": "node generate-review-content-sql.js",
     "sql:event-genres": "node generate-event-genre-sql.js"
   },
