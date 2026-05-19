@@ -1,6 +1,6 @@
 # Backend — Architektur & Dokumentation
 
-**Framework:** Strapi v5.42.1 (Headless CMS)  
+**Framework:** Strapi v5 (Headless CMS)  
 **Sprache:** TypeScript  
 **Datenbank:** PostgreSQL 16  
 **Laufzeitumgebung:** Node.js (Docker-Container)
@@ -32,7 +32,8 @@ backend/
 │   │   │   ├── controllers/kommentar.ts
 │   │   │   ├── services/kommentar.ts
 │   │   │   ├── routes/kommentar.ts
-│   │   │   └── content-types/kommentar/schema.json
+│   │   │   ├── content-types/kommentar/schema.json
+│   │   │   └── content-types/kommentar/lifecycles.ts  # E-Mail bei Freischaltung
 │   │   ├── autor/
 │   │   │   ├── controllers/autor.ts
 │   │   │   ├── services/autor.ts
@@ -52,14 +53,12 @@ backend/
 │   │       ├── music-details.json
 │   │       └── event-details.json
 │   │
-│   ├── admin/                  # Admin-Panel-Anpassungen
-│   └── extensions/             # Plugin-Erweiterungen
-│
-├── database/
-│   └── migrations/             # Datenbankmigrationen
+│   └── admin/                  # Admin-Panel-Anpassungen
+│       ├── app.tsx
+│       └── tsconfig.json
 │
 ├── public/
-│   └── uploads/                # Medien-Uploads (persistentes Volume)
+│   └── robots.txt
 │
 ├── Dockerfile.dev              # Development-Image
 ├── package.json
@@ -95,7 +94,6 @@ export default factories.createCoreRouter('api::rezension.rezension');
 ```ts
 export default factories.createCoreController('api::rezension.rezension', ({ strapi }) => ({
   async find(ctx) {
-    // Eigene Logik vor/nach dem Standard-Find
     const result = await super.find(ctx);
     return result;
   },
@@ -127,17 +125,34 @@ Die zentrale Entität der Plattform. Repräsentiert eine Kritik zu einem Werk.
 | Feld | Typ | Pflicht | Beschreibung |
 |---|---|---|---|
 | `title` | String | ✅ | Titel der Rezension |
-| `slug` | UID (→ title) | ✅ | URL-Slug, eindeutig |
-| `content` | RichText | ✅ | Volltext (HTML) |
+| `slug` | UID (→ title) | ❌ | URL-Slug, eindeutig |
+| `content` | RichText | ❌ | Volltext (HTML) |
 | `cover` | Media (single) | ❌ | Titelbild |
-| `rating` | Decimal (0–10) | ✅ | Bewertung |
-| `type` | Enumeration | ✅ | `buch \| film \| spiel \| musik \| event` |
+| `rating` | Decimal (0–10) | ❌ | Bewertung |
+| `type` | Enumeration | ✅ | `Buch \| Film \| Musik \| Spiel \| Event` |
+| `details` | Dynamic Zone | ❌ | Typ-spezifische Metadaten (5 Komponenten) |
+| `extraDetails` | JSON | ❌ | Erweiterbare Schlüssel-Wert-Metadaten (vom Admin-Frontend befüllt) |
+| `affiliateLinks` | JSON | ❌ | Liste von Affiliate-Links mit Label und URL |
 | `autor` | Relation → Autor | ❌ | Autor der Rezension (manyToOne) |
 | `genres` | Relation → Genre[] | ❌ | Zugeordnete Genres (manyToMany) |
 | `kommentare` | Relation → Kommentar[] | ❌ | Nutzerkommentare (oneToMany) |
-| `details` | Dynamic Zone | ❌ | Typ-spezifische Metadaten |
 
 **Draft & Publish:** Aktiviert — Rezensionen sind erst nach explizitem Veröffentlichen öffentlich sichtbar.
+
+**`extraDetails`-Format** (JSON):
+```json
+[
+  { "label": "Darsteller", "values": [{ "label": "Max Muster" }] },
+  { "label": "Trailer",    "values": [{ "label": "https://...", "href": "https://..." }] }
+]
+```
+
+**`affiliateLinks`-Format** (JSON):
+```json
+[
+  { "label": "Bei Amazon kaufen", "url": "https://amazon.de/...", "provider": "Amazon" }
+]
+```
 
 **Dynamic Zone `details`** — unterstützte Komponenten:
 
@@ -173,8 +188,31 @@ Nutzer sendet Kommentar → isApproved: false (unsichtbar)
         ↓
 Admin prüft im Strapi-Panel
         ↓
-Admin setzt isApproved: true → Kommentar erscheint öffentlich
+Admin setzt isApproved: true → Lifecycle-Hook feuert → E-Mail an Nutzer
+        ↓
+Kommentar erscheint öffentlich
 ```
+
+**Lifecycle-Hook** (`content-types/kommentar/lifecycles.ts`):
+
+Der `afterUpdate`-Hook sendet automatisch eine Benachrichtigungs-E-Mail an den Kommentarverfasser, sobald `isApproved` auf `true` gesetzt wird. Voraussetzung ist ein konfigurierter E-Mail-Provider im Strapi Admin-Panel.
+
+```ts
+// Vereinfachte Darstellung
+export default {
+  async afterUpdate(event) {
+    if (event.params.data?.isApproved !== true) return;
+    const kommentar = await strapi.entityService.findOne(..., { populate: ['user', 'rezension'] });
+    await strapi.plugins['email'].services.email.send({
+      to: kommentar.user.email,
+      subject: 'Dein Kommentar wurde freigeschaltet – roterdorn.de',
+      // ...
+    });
+  },
+};
+```
+
+E-Mail-Fehler werden geloggt, aber **nicht** als Exception weitergegeben — das Update selbst schlägt nie wegen einer fehlgeschlagenen E-Mail fehl.
 
 ---
 
@@ -302,6 +340,27 @@ export default ({ env }) => ({
 });
 ```
 
+### `config/middlewares.ts`
+
+Der Middleware-Stack verwendet Strapi-Defaults ohne benutzerdefinierte Konfiguration:
+
+```ts
+const config: Core.Config.Middlewares = [
+  'strapi::logger',
+  'strapi::errors',
+  'strapi::security',
+  'strapi::cors',
+  'strapi::poweredBy',
+  'strapi::query',
+  'strapi::body',
+  'strapi::session',
+  'strapi::favicon',
+  'strapi::public',
+];
+```
+
+CORS-Konfiguration (erlaubte Origins) wird über die Strapi Admin-Oberfläche oder direkt in der `config/middlewares.ts` gesetzt.
+
 ### Umgebungsvariablen (`.env`)
 
 | Variable | Beschreibung | Beispiel |
@@ -315,6 +374,8 @@ export default ({ env }) => ({
 | `API_TOKEN_SALT` | Salt für API-Token-Generierung | Random-String |
 | `ADMIN_JWT_SECRET` | JWT-Secret für Admin-Panel | Random-String |
 | `JWT_SECRET` | JWT-Secret für Users-Permissions | Random-String |
+| `DEFAULT_FROM` | Absender-E-Mail für Benachrichtigungen | `noreply@roterdorn.de` |
+| `DEFAULT_REPLYTO` | Reply-To-Adresse für Benachrichtigungen | `noreply@roterdorn.de` |
 
 ---
 
@@ -326,32 +387,35 @@ Strapi generiert automatisch CRUD-Endpoints für jeden Content-Type:
 
 | Method | Endpoint | Beschreibung |
 |---|---|---|
-| `GET` | `/api/rezensions` | Liste aller veröffentlichten Rezensionen |
-| `GET` | `/api/rezensions/:id` | Einzelne Rezension by ID |
-| `POST` | `/api/rezensions` | Neue Rezension erstellen (Auth) |
-| `PUT` | `/api/rezensions/:id` | Rezension aktualisieren (Auth) |
-| `DELETE` | `/api/rezensions/:id` | Rezension löschen (Auth) |
+| `GET` | `/api/rezensionen` | Liste aller veröffentlichten Rezensionen |
+| `GET` | `/api/rezensionen/:documentId` | Einzelne Rezension by documentId |
+| `POST` | `/api/rezensionen` | Neue Rezension erstellen (Auth) |
+| `PUT` | `/api/rezensionen/:documentId` | Rezension aktualisieren (Auth) |
+| `DELETE` | `/api/rezensionen/:documentId` | Rezension löschen (Auth) |
 
 ### Query-Parameter (Strapi v5 Filter-Syntax)
 
 ```
 # Filtern nach Typ
-GET /api/rezensions?filters[type][$eq]=film
+GET /api/rezensionen?filters[type][$eq]=Film
 
 # Filtern nach Genre (Relation)
-GET /api/rezensions?filters[genres][slug][$eq]=science-fiction
+GET /api/rezensionen?filters[genres][slug][$eq]=science-fiction
 
 # Volltextsuche (case-insensitive)
-GET /api/rezensions?filters[title][$containsi]=matrix
+GET /api/rezensionen?filters[title][$containsi]=matrix
 
 # Populate (Relationen laden)
-GET /api/rezensions?populate[cover][fields][0]=url&populate[autor][fields][0]=name
+GET /api/rezensionen?populate[cover]=true&populate[autor][populate][avatar]=true
+
+# Draft-Modus (für Admin-Zugriff)
+GET /api/rezensionen?status=draft
 
 # Sortierung
-GET /api/rezensions?sort[0]=rating:desc&sort[1]=publishedAt:desc
+GET /api/rezensionen?sort[0]=rating:desc&sort[1]=publishedAt:desc
 
 # Paginierung
-GET /api/rezensions?pagination[page]=1&pagination[pageSize]=12
+GET /api/rezensionen?pagination[page]=1&pagination[pageSize]=12
 ```
 
 ### Authentifizierung
@@ -362,7 +426,11 @@ GET /api/rezensions?pagination[page]=1&pagination[pageSize]=12
 Authorization: Bearer <STRAPI_API_TOKEN>
 ```
 
-Der Token wird in Strapi unter **Settings → API Tokens** generiert und im Frontend als `STRAPI_API_TOKEN`-Umgebungsvariable gesetzt.
+Das Frontend nutzt zwei separate Tokens:
+- **Read-Token** (`STRAPI_API_TOKEN`): Schreibgeschützt, für öffentliche Datenabrufe
+- **Write-Token** (`STRAPI_WRITE_TOKEN`): Für Admin-Operationen (Erstellen, Aktualisieren, Löschen)
+
+Tokens werden in Strapi unter **Settings → API Tokens** generiert.
 
 ---
 
@@ -375,11 +443,12 @@ Strapi's eingebautes Authentifizierungssystem wird für Nutzerregistrierung und 
 | `/api/auth/local/register` | POST | Neuen Nutzer registrieren |
 | `/api/auth/local` | POST | Einloggen → gibt JWT zurück |
 | `/api/users/me` | GET | Aktuellen Nutzer abrufen (Bearer Auth) |
+| `/api/users/me?populate=role` | GET | Nutzer mit Rollen-Information (für Admin-Check) |
 
 **Nutzerfelder** (Standard):
-- `id`, `username`, `email`, `confirmed`, `blocked`, `createdAt`
+- `id`, `username`, `email`, `confirmed`, `blocked`, `createdAt`, `role`
 
-**Beziehung zu Kommentaren:** `user.id` wird beim Kommentar-Erstellen mitgespeichert. Damit können beim Löschen eines Kontos oder Ändern des Usernamens alle historischen Kommentare dennoch dem ursprünglichen Nutzer zugeordnet werden.
+**Beziehung zu Kommentaren:** `user.id` wird beim Kommentar-Erstellen mitgespeichert. Damit können alle historischen Kommentare dem ursprünglichen Nutzer zugeordnet werden, auch wenn der Username später geändert wird.
 
 ---
 
@@ -397,7 +466,7 @@ EXPOSE 1337
 CMD ["npm", "run", "develop"]
 ```
 
-**Docker Compose Integration** (aus `docker-compose.yml`):
+**Docker Compose Integration** (aus `docker-compose.yml` im Projektroot):
 
 ```yaml
 strapi:
@@ -420,40 +489,7 @@ strapi:
 
 ---
 
-## Migrations & Datenbankevolution
-
-Datenbankmigrationen liegen in `database/migrations/`. Strapi v5 erzeugt automatisch Migrationsdateien beim Ändern von Content-Type-Schemas über das Admin-Panel.
-
-**Manuelle Migration** via Strapi CLI:
-
-```bash
-# Migration erstellen
-npm run strapi generate migration <name>
-
-# Migrationen ausführen
-npm run strapi migration:run
-```
-
-**`migration/`-Verzeichnis im Projektroot** enthält Legacy-Datenmigrationstools für den initialen Datenimport (einmalige Verwendung, dokumentiert in `migration/README.md`).
-
----
-
 ## Sicherheitskonfiguration
-
-### CORS
-
-Konfiguriert in `config/middlewares.ts` — erlaubt nur den Frontend-Origin:
-
-```ts
-{
-  name: 'strapi::cors',
-  config: {
-    origin: [process.env.FRONTEND_URL ?? 'http://localhost:3000'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    headers: ['Content-Type', 'Authorization'],
-  },
-}
-```
 
 ### API-Berechtigungen (RBAC)
 
@@ -461,16 +497,17 @@ Strapi's Role-Based Access Control unterscheidet:
 
 | Rolle | Rechte |
 |---|---|
-| **Public** | GET auf `rezension`, `genre` (veröffentlicht) |
-| **Authenticated** | + POST auf `kommentar` |
+| **Public** | GET auf `rezension`, `genre`, `autor` (nur veröffentlicht) |
+| **Authenticated** | + POST auf `kommentar`, GET `/users/me` |
 | **Admin** | Vollzugriff auf alle Endpunkte + Admin-Panel |
 
 Berechtigungen werden im Admin-Panel unter **Settings → Users & Permissions → Roles** verwaltet.
 
 ### Content-Sicherheit
 
-- **Rich Text:** Strapi's WYSIWYG-Editor (Lexical) erzeugt HTML-Output. Eine explizite serverseitige HTML-Sanitization ist **nicht** konfiguriert — das Frontend sollte DOMPurify vor dem Rendern mit `dangerouslySetInnerHTML` einsetzen.
+- **Rich Text:** Strapi's WYSIWYG-Editor (Lexical) erzeugt HTML-Output. Das Frontend sanitiert den HTML-Output serverseitig mit `lib/sanitize.ts` vor dem Rendern mit `dangerouslySetInnerHTML`.
 - **Datei-Uploads:** Strapi begrenzt erlaubte MIME-Typen (Standard: Bilder). Konfigurierbar über `config/plugins.ts`.
+- **Zwei API-Tokens:** Read-Token für öffentliche Abfragen, Write-Token für Admin-Mutationen — minimales Privilege-Prinzip.
 
 ---
 
@@ -484,12 +521,13 @@ http://localhost:1337/admin    (Entwicklung)
 
 **Hauptfunktionen:**
 - Content Manager: Rezensionen erstellen, bearbeiten, veröffentlichen
-- Kommentar-Moderation: `isApproved` auf `true` setzen
+- Kommentar-Moderation: `isApproved` auf `true` setzen → löst E-Mail-Benachrichtigung aus
 - Medienverwaltung: Upload und Verwaltung von Bilddateien
 - Nutzer- und Rollenverwaltung
-- API-Token-Generierung
+- API-Token-Generierung (Read-Token + Write-Token)
 - Webhook-Konfiguration (für Frontend-Revalidierung)
+- E-Mail-Provider-Konfiguration (für Kommentar-Benachrichtigungen)
 
 **Webhook für Cache-Revalidierung:**
 
-Im Admin Panel unter **Settings → Webhooks** einen Webhook auf `POST http://frontend:3000/api/revalidate` mit dem konfigurierten `REVALIDATE_SECRET` einrichten. Dieser wird bei jedem Publish/Unpublish einer Rezension ausgelöst.
+Im Admin Panel unter **Settings → Webhooks** einen Webhook auf `POST http://frontend:3000/api/revalidate` mit dem konfigurierten `REVALIDATION_SECRET` einrichten. Dieser wird bei jedem Publish/Unpublish einer Rezension ausgelöst.
