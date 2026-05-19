@@ -18,6 +18,18 @@ export interface TypeMeta {
   className: string;
 }
 
+export interface NavSubcategory {
+  label: string;
+  href: string;
+}
+
+export interface NavItem {
+  href: string;
+  label: string;
+  icon: string;
+  subcategories: NavSubcategory[];
+}
+
 export const TYPE_META: Record<RezensionType, TypeMeta> = {
   Buch: {
     type: "Buch",
@@ -66,12 +78,73 @@ export const TYPE_META: Record<RezensionType, TypeMeta> = {
   },
 };
 
-/** Ordered list of all types for navigation, grids, etc. */
+/** Ordered list of all supported review types. */
 export const ALL_TYPES: RezensionType[] = ["Buch", "Film", "Musik", "Spiel", "Event"];
 
-/** Navigation items derived from TYPE_META */
-export const NAV_ITEMS = ALL_TYPES.map((t) => ({
+/** Review categories shown in the public navigation and category grid. */
+export const CATEGORY_TYPES: RezensionType[] = ["Buch", "Film", "Musik", "Spiel", "Event"];
+
+export const TYPE_SUBCATEGORIES: Partial<Record<RezensionType, string[]>> = {
+  Buch: [
+    "Belletristik",
+    "Comic",
+    "Englische Bücher",
+    "Fachliteratur",
+    "Hörbuch",
+    "Kinder- und Jugendbuch",
+  ],
+  Film: ["Spielfilm", "Serie"],
+  Musik: ["Label", "Musikgenre", "Musiker"],
+  Spiel: ["Brettspiel", "Kartenspiel", "PC / Konsole", "Rollenspiel", "Tabletop", "Würfelspiel"],
+  Event: ["Veranstaltungen", "Konzert", "Lesung", "Theater"],
+};
+
+const subcategoryHref = (type: RezensionType, label: string) =>
+  type === "Musik"
+    ? `/${TYPE_META[type].slug}?liste=${encodeURIComponent(label.toLowerCase())}`
+    : `/${TYPE_META[type].slug}?genre=${encodeURIComponent(label)}`;
+
+/** Category navigation items derived from TYPE_META */
+export const CATEGORY_NAV_ITEMS: NavItem[] = CATEGORY_TYPES.map((t) => ({
   href: `/${TYPE_META[t].slug}`,
   label: TYPE_META[t].labelPlural,
   icon: TYPE_META[t].icon,
+  subcategories: TYPE_SUBCATEGORIES[t]?.map((label) => ({
+    label,
+    href: subcategoryHref(t, label),
+  })) || [],
 }));
+
+/** Editorial sections from the legacy mini database. */
+export const EDITORIAL_NAV_ITEMS: NavItem[] = [
+  {
+    href: "/neuigkeiten",
+    label: "Neuigkeiten",
+    icon: "📰",
+    subcategories: [],
+  },
+  {
+    href: "/artikel",
+    label: "Artikel",
+    icon: "✍️",
+    subcategories: [],
+  },
+  {
+    href: "/interview",
+    label: "Interviews",
+    icon: "🎙️",
+    subcategories: [],
+  },
+];
+
+/** Primary header navigation. */
+export const NAV_ITEMS: NavItem[] = [
+  ...CATEGORY_NAV_ITEMS,
+  ...EDITORIAL_NAV_ITEMS,
+  {
+    href: "/ueber-uns",
+    label: "Über uns",
+    icon: "👥",
+    subcategories: [],
+  },
+];

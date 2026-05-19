@@ -20,7 +20,7 @@ export default function LatestReviewsSection({ rezensionen }: LatestReviewsSecti
   const hasData = rezensionen.length > 0;
 
   return (
-    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-20">
+    <section className="w-full px-4 pb-20 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold text-text-primary">Neueste Rezensionen</h2>
         {hasData && (
@@ -34,7 +34,7 @@ export default function LatestReviewsSection({ rezensionen }: LatestReviewsSecti
       </div>
 
       {hasData ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 stagger-children">
           {rezensionen.map((rezension) => (
             <ReviewCard key={rezension.id} rezension={rezension} />
           ))}

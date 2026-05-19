@@ -1,15 +1,21 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getRezensionBySlug, getStrapiMediaUrl } from "@/lib/strapi";
-import { sanitizeHtml } from "@/lib/sanitize";
+import { renderReviewHtml } from "@/lib/review-html";
 import { TYPE_SLUG_MAP } from "@/lib/types";
 import { TYPE_META } from "@/lib/constants";
+import { LEGACY_REVIEW_DETAILS } from "@/lib/legacy-review-details.generated";
+import { LEGACY_REVIEW_SLUG_ALIASES } from "@/lib/legacy-review-aliases.generated";
+import { LEGACY_AFFILIATE_LINKS } from "@/lib/legacy-editorial.generated";
 import { formatDate, readingTime, buildReviewJsonLd } from "@/lib/utils";
+import { SITE_URL } from "@/lib/config";
+import { getCurrentUserForAdmin } from "@/lib/admin-auth";
 import RatingBadge from "@/components/ui/RatingBadge";
 import TypeBadge from "@/components/ui/TypeBadge";
 import DetailSection from "@/components/reviews/DetailSection";
+import AffiliateLinksBox from "@/components/reviews/AffiliateLinksBox";
 import CommentSection from "@/components/comments/CommentSection";
 import SimilarReviews from "@/components/reviews/SimilarReviews";
 
@@ -19,18 +25,27 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
+  const canonicalSlug = LEGACY_REVIEW_SLUG_ALIASES[slug]?.slug || slug;
 
   try {
-    const response = await getRezensionBySlug(slug);
+    const response = await getRezensionBySlug(canonicalSlug);
     const rezension = response.data?.[0];
     if (!rezension) return {};
 
+    const ratingText = rezension.rating != null ? ` — Bewertung: ${rezension.rating}/10` : "";
+    const typeSlug = TYPE_META[rezension.type].slug;
+
     return {
       title: rezension.title,
-      description: `Rezension: ${rezension.title} — Bewertung: ${rezension.rating}/10`,
+      description: `Rezension: ${rezension.title}${ratingText}`,
+      alternates: {
+        canonical: `${SITE_URL}/${typeSlug}/${rezension.slug}`,
+      },
       openGraph: {
         title: rezension.title,
-        description: `Rezension: ${rezension.title} — Bewertung: ${rezension.rating}/10`,
+        description: `Rezension: ${rezension.title}${ratingText}`,
+        type: "article",
+        url: `${SITE_URL}/${typeSlug}/${rezension.slug}`,
         images: rezension.cover
           ? [{ url: getStrapiMediaUrl(rezension.cover.url) }]
           : [],
@@ -52,14 +67,33 @@ export default async function RezensionPage({ params }: PageProps) {
     const response = await getRezensionBySlug(slug);
     rezension = response.data?.[0];
   } catch {
+    rezension = null;
+  }
+
+  if (!rezension) {
+    const alias = LEGACY_REVIEW_SLUG_ALIASES[slug];
+    if (alias) {
+      redirect(`/${TYPE_META[alias.type].slug}/${alias.slug}`);
+    }
     notFound();
   }
 
-  if (!rezension) notFound();
+  const expectedTypeSlug = TYPE_META[rezension.type].slug;
+  if (type !== expectedTypeSlug) {
+    redirect(`/${expectedTypeSlug}/${slug}`);
+  }
 
   const coverUrl = getStrapiMediaUrl(rezension.cover?.url);
-  const publishDate = formatDate(rezension.publishedAt);
+  const legacyDetails = LEGACY_REVIEW_DETAILS[rezension.slug];
+  const affiliateLinks = [
+    ...(LEGACY_AFFILIATE_LINKS[rezension.slug] || LEGACY_AFFILIATE_LINKS[slug] || []),
+    ...(rezension.affiliateLinks || []),
+  ];
+  const publishedAt = legacyDetails?.publishedAt || rezension.publishedAt || rezension.updatedAt || rezension.createdAt;
+  const publishDate = formatDate(publishedAt);
+  const editorName = rezension.autor?.name || legacyDetails?.editor;
   const meta = TYPE_META[rezension.type];
+  const user = await getCurrentUserForAdmin();
 
   return (
     <article className="animate-fade-in-up">
@@ -89,12 +123,25 @@ export default async function RezensionPage({ params }: PageProps) {
         {/* Meta bar */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <TypeBadge type={rezension.type} />
-          <RatingBadge rating={rezension.rating} size="lg" />
+          {rezension.rating != null && <RatingBadge rating={rezension.rating} size="lg" />}
           <span className="text-sm text-text-muted">{publishDate}</span>
           {rezension.content && (
             <span className="text-sm text-text-muted">
               · {readingTime(rezension.content)} Min. Lesezeit
             </span>
+          )}
+          {editorName && (
+            <span className="text-sm text-text-muted">
+              · Redakteur: {editorName}
+            </span>
+          )}
+          {user?.isAdmin && (
+            <Link
+              href={`/admin/beitraege/${rezension.documentId}/bearbeiten`}
+              className="inline-flex items-center rounded-lg border border-border-subtle bg-surface-tertiary px-3 py-1.5 text-sm font-semibold text-text-accent transition-colors hover:border-border-hover hover:text-brand-400"
+            >
+              Beitrag bearbeiten
+            </Link>
           )}
         </div>
 
@@ -145,16 +192,25 @@ export default async function RezensionPage({ params }: PageProps) {
         )}
 
         {/* Details (Dynamic Zone) */}
-        {rezension.details && rezension.details.length > 0 && (
+        {((rezension.details && rezension.details.length > 0) || legacyDetails?.rows.length || rezension.extraDetails?.length) && (
           <div className="mb-10">
-            <DetailSection details={rezension.details} />
+            <DetailSection
+              details={rezension.details || []}
+              type={rezension.type}
+              legacyDetails={legacyDetails}
+              customRows={rezension.extraDetails || []}
+              coverUrl={rezension.cover ? coverUrl : undefined}
+              coverAlt={rezension.cover?.alternativeText || rezension.title}
+            />
           </div>
         )}
+
+        <AffiliateLinksBox links={affiliateLinks} />
 
         {/* Rich Text Content */}
         <div
           className="prose-custom mb-16"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(rezension.content || "") }}
+          dangerouslySetInnerHTML={{ __html: renderReviewHtml(rezension.content || "") }}
         />
 
         {/* Divider */}
@@ -192,8 +248,8 @@ export default async function RezensionPage({ params }: PageProps) {
             title: rezension.title,
             coverUrl,
             rating: rezension.rating,
-            authorName: rezension.autor?.name || "Roterdorn",
-            publishedAt: rezension.publishedAt,
+            authorName: editorName || "Roterdorn",
+            publishedAt,
           }),
         }}
       />

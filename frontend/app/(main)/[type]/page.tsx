@@ -1,16 +1,20 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getRezensionenByType, getGenres } from "@/lib/strapi";
+import { getRezensionenByType } from "@/lib/strapi";
 import { TYPE_SLUG_MAP, TYPE_LABELS } from "@/lib/types";
-import { TYPE_META } from "@/lib/constants";
+import { TYPE_META, TYPE_SUBCATEGORIES } from "@/lib/constants";
+import { SITE_URL } from "@/lib/config";
 import type { Rezension } from "@/lib/types";
 import ReviewCard from "@/components/reviews/ReviewCard";
 import EmptyState from "@/components/ui/EmptyState";
 import FilterBar from "@/components/reviews/FilterBar";
+import MusicTaxonomyDirectory, {
+  getMusicTaxonomySlug,
+} from "@/components/music/MusicTaxonomyDirectory";
 
 interface PageProps {
   params: Promise<{ type: string }>;
-  searchParams: Promise<{ sort?: string; genre?: string }>;
+  searchParams: Promise<{ sort?: string; genre?: string; liste?: string; buchstabe?: string }>;
 }
 
 export async function generateStaticParams() {
@@ -24,29 +28,44 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: `${TYPE_LABELS[rezensionType]} — Rezensionen`,
-    description: `Alle ${TYPE_LABELS[rezensionType]}-Rezensionen auf roterdorn. Ehrliche Reviews mit Bewertungen.`,
+    description: `Alle ${TYPE_LABELS[rezensionType]}-Rezensionen auf roterdorn.`,
+    alternates: {
+      canonical: `${SITE_URL}/${TYPE_META[rezensionType].slug}`,
+    },
   };
 }
 
 export default async function TypePage({ params, searchParams }: PageProps) {
   const { type } = await params;
-  const { sort, genre } = await searchParams;
+  const { sort, genre, liste, buchstabe } = await searchParams;
 
   const rezensionType = TYPE_SLUG_MAP[type];
   if (!rezensionType) notFound();
 
   const meta = TYPE_META[rezensionType];
+  const musicTaxonomy = rezensionType === "Musik" ? getMusicTaxonomySlug(liste) : null;
+  const musicTaxonomyLinks = rezensionType === "Musik"
+    ? (TYPE_SUBCATEGORIES.Musik || []).map((label) => ({
+        label,
+        href: `/musik?liste=${encodeURIComponent(label.toLowerCase())}`,
+      }))
+    : undefined;
+
+  if (musicTaxonomy) {
+    return (
+      <MusicTaxonomyDirectory
+        taxonomy={musicTaxonomy}
+        currentLetter={buchstabe}
+      />
+    );
+  }
 
   let rezensionen: Rezension[] = [];
-  let allGenres: string[] = [];
+  const allGenres = TYPE_SUBCATEGORIES[rezensionType] || [];
 
   try {
-    const [response, genreList] = await Promise.all([
-      getRezensionenByType(rezensionType, { sort, genre }),
-      getGenres(),
-    ]);
+    const response = await getRezensionenByType(rezensionType, { sort, genre });
     rezensionen = response.data || [];
-    allGenres = genreList.map((g) => g.name);
   } catch {
     rezensionen = [];
   }
@@ -70,6 +89,8 @@ export default async function TypePage({ params, searchParams }: PageProps) {
       {/* Filter Bar */}
       <FilterBar
         genres={allGenres}
+        genreLinks={musicTaxonomyLinks}
+        genreLabel={rezensionType === "Musik" ? "Kategorie" : "Genre"}
         currentSort={sort || "publishedAt:desc"}
         currentGenre={genre || ""}
       />
@@ -84,7 +105,7 @@ export default async function TypePage({ params, searchParams }: PageProps) {
       ) : (
         <EmptyState
           icon={meta.icon}
-          title={genre ? `Keine ${meta.labelPlural} im Genre „${genre}"` : `Noch keine ${meta.labelPlural}`}
+          title={genre ? `Keine ${meta.labelPlural} im Genre „${genre}“` : `Noch keine ${meta.labelPlural}`}
           description={
             genre
               ? "Versuche ein anderes Genre oder entferne den Filter."

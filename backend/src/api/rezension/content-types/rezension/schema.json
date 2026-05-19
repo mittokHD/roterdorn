@@ -48,6 +48,12 @@
         "details.event-details"
       ]
     },
+    "extraDetails": {
+      "type": "json"
+    },
+    "affiliateLinks": {
+      "type": "json"
+    },
     "autor": {
       "type": "relation",
       "relation": "manyToOne",

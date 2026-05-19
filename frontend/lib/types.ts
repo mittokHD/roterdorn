@@ -30,16 +30,33 @@ export interface Rezension {
   title: string;
   slug: string;
   content: string;
-  rating: number;
+  rating: number | null;
   type: RezensionType;
   cover: StrapiMedia | null;
   autor: Autor | null;
   genres: Genre[];
   kommentare: Kommentar[];
   details: DetailComponent[];
+  extraDetails?: AdminExtraDetailRow[] | null;
+  affiliateLinks?: AdminAffiliateLink[] | null;
   createdAt: string;
   updatedAt: string;
-  publishedAt: string;
+  publishedAt: string | null;
+}
+
+export interface AdminExtraDetailRow {
+  label: string;
+  values: Array<{
+    label: string;
+    href?: string;
+    slug?: string;
+  }>;
+}
+
+export interface AdminAffiliateLink {
+  label: string;
+  url: string;
+  provider?: string;
 }
 
 export interface Autor {
@@ -69,6 +86,10 @@ export interface Kommentar {
     id: number;
     username: string;
   } | null;
+}
+
+export interface LatestKommentar extends Kommentar {
+  rezension?: Pick<Rezension, "id" | "documentId" | "title" | "slug" | "type"> | null;
 }
 
 // ─── Dynamic Zone Components ─────────────────

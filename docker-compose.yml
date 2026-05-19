@@ -68,6 +68,7 @@ services:
       STRAPI_WRITE_TOKEN: ${STRAPI_WRITE_TOKEN}
       REVALIDATION_SECRET: ${REVALIDATION_SECRET}
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+      ADMIN_CROSSPOST_EMAILS: ${ADMIN_CROSSPOST_EMAILS}
       NODE_ENV: development
     volumes:
       - ./frontend/app:/opt/app/app
@@ -76,6 +77,7 @@ services:
       - ./frontend/public:/opt/app/public
       - ./frontend/hooks:/opt/app/hooks
       - ./frontend/contexts:/opt/app/contexts
+      - ./frontend/proxy.ts:/opt/app/proxy.ts
       - ./frontend/next.config.ts:/opt/app/next.config.ts
       - ./frontend/tsconfig.json:/opt/app/tsconfig.json
       - ./frontend/postcss.config.mjs:/opt/app/postcss.config.mjs

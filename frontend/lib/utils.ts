@@ -49,7 +49,7 @@ export function buildReviewJsonLd(params: {
       name: params.title,
       image: params.coverUrl,
     },
-    reviewRating: params.rating
+    reviewRating: params.rating != null
       ? {
           "@type": "Rating",
           ratingValue: params.rating,
